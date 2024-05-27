@@ -8,7 +8,7 @@ class GreekNumber:
 
     def __init__(self, value: str=None, number: int=None, positional: bool=False, capital: bool=False) -> None:
         self.capital = capital
-        if not number:
+        if number == None:
             raise ValueError("Необходимо указать число")
         if not value and not positional:
             self._convert_arabic_to_greek(number)
@@ -26,6 +26,38 @@ class GreekNumber:
     
     def __repr__(self) -> str:
         return f"{self.value}"
+    
+    def __add__(self, other):
+        if isinstance(other, GreekNumber):
+            return GreekNumber(number=self.number + other.number)
+        else:
+            raise TypeError("Неподдерживаемый тип операнда")
+
+    def __sub__(self, other):
+        if isinstance(other, GreekNumber):
+            return GreekNumber(number=self.number - other.number)
+        else:
+            raise TypeError("Неподдерживаемый тип операнда")
+
+    def __mul__(self, other):
+        if isinstance(other, GreekNumber):
+            return GreekNumber(number=self.number * other.number)
+        else:
+            raise TypeError("Неподдерживаемый тип операнда")
+
+    def __div__(self, other):
+        if isinstance(other, GreekNumber):
+            return GreekNumber(number=self.number / other.number)
+        else:
+            raise TypeError("Неподдерживаемый тип операнда")
+        
+    def __truediv__(self, other):
+        if isinstance(other, GreekNumber):
+            if other.number == 0:
+                raise ZeroDivisionError("Деление на ноль")
+            return RomanNumber(number=self.number // other.number)
+        else:
+            raise TypeError("Неподдерживаемый тип операнда")
     
     def get_str(self) -> str:
         """Преобразовавние Unicode греческого числа в название
@@ -141,3 +173,35 @@ class RomanNumber:
     
     def __len__(self) -> int:
         return len(self.value)
+    
+    def __add__(self, other):
+        if isinstance(other, RomanNumber):
+            return RomanNumber(number=self.number + other.number)
+        else:
+            raise TypeError("Неподдерживаемый тип операнда")
+
+    def __sub__(self, other):
+        if isinstance(other, RomanNumber):
+            return RomanNumber(number=self.number - other.number)
+        else:
+            raise TypeError("Неподдерживаемый тип операнда")
+
+    def __mul__(self, other):
+        if isinstance(other, RomanNumber):
+            return RomanNumber(number=self.number * other.number)
+        else:
+            raise TypeError("Неподдерживаемый тип операнда")
+
+    def __div__(self, other):
+        if isinstance(other, RomanNumber):
+            return RomanNumber(number=self.number / other.number)
+        else:
+            raise TypeError("Неподдерживаемый тип операнда")
+        
+    def __truediv__(self, other):
+        if isinstance(other, RomanNumber):
+            if other.number == 0:
+                raise ZeroDivisionError("Деление на ноль")
+            return RomanNumber(number=self.number // other.number)
+        else:
+            raise TypeError("Неподдерживаемый тип операнда")
