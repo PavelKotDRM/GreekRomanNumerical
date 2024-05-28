@@ -1,28 +1,34 @@
-<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="521px" height="297px" viewBox="-0.5 -0.5 521 297" content="&lt;mxfile&gt;&lt;diagram id=&quot;SZV7jK9JC3sHE44ie8k9&quot; name=&quot;Page-1&quot;&gt;7Zphj6I4GMc/jcnsi7sIKLovEd3ZyTlzE53LvTQVOtBMoaTUVffTXwsFRGBl1mruRSdmQv8thfb3PG2floHlRodHCpLwmfgQD8yhfxhY84FpTiyb/xfCMRdskRJCQJGfS0YlrNFPKMWhVHfIh2mtICMEM5TURY/EMfRYTQOUkn292DvB9acmIIANYe0B3FT/RT4Lc3U6Hlb6d4iCsHiyMZQ5W+B9BJTsYvm8gWl9y/7y7AgUdcnyaQh8sj+RrMXAcikhLL+KDi7EomuLbsvv+9aRW743hTHrc8Poa37HD4B3su2PFMIPl8Q/IGXyJdmx6Jh0jyIMYp6avZOYrWWOwdMAoyDm1x5/NKRcEBUg3qeOzGAk4aoXIuwvwZHsxAumjHdYkZqFhKKfvFqAZZ08mzJpHqZdK7EWd3J5yFUKU17mtWi1cSY9g0Ot4BKkTAoewRgkKdqWzYgADVA8I4yRSBZqdqrsZ9FCeDiRZCc/QhJBRo+8iMwdSd7HenJfGVdpEuGpYX2VIpAGHZQ1V1D5heTazriw2hPGA3MmvAckKOtrR1gu968Gbt46lmGg5AO6BBPOdR6TnD/C+EwqTADDd9ZpAGkCPBQHy6zMfFQpK9luIRF+7zvOPCNEvg9jAY8wwEBOSmBJCIpZ1i/jGf/xVrrDP8eDMX9xl6eNKs1/ojhl3Kx5WwDKOEJuBnsoTKGFcOkYlxFLpqbdj2lR7iqkRgvSM3YYZUxydsUoZvwWuIgjwLAi9SZAzv8wGjStJk2rhRwGW4hfSYoYIqJ+mpc9I3oJWt0qURxCilTBHJv9YE4VsDQ73TMEcQA30k0fhId+Ec7qmgNn2OCtfbU/Xrvn+KvEV60uvvkc+8Bb+CUfg3l7NdYrsE7vOQSPfo11k8jxTfNVxtcweg7LSgCPLwBmZAMo2CLvgTdYEhbN1oSvIGxN70jYvky48GKNWjlqe3RH1NMG6hWJQJzHuQ2OOsxVEub2jnOnChDbbWGujom6YqLSI5QHuApiIrszJtJr5l8Ow5+nat1xFLYvrZn1kko94HvGunZzzZxtJzs4Cfn4pveTVU20lnm2odzixaNbbSjbXevmx9Vi8dfGWb5+d2aLt9x9feRp/61Ilx5y1bTbhlaJ/zaPg9rIblzn9enNWWrCSgi3bTbfivCk6zAoJ/zyz/Nssdosn9bSfTFKNdxr4E5aNjRuBrftWKgVbt2DNeQrIRvDnvOvEspdwVGN8vzJ1TOwIrpWyxL6ZnS7josadPUsrJby+J4LrUkLZb1Z1bVZ9Rs0pz0XVQp2qybNbY1sc/llF20h1bHvjWPf8gOni6hVDM9dp4Krv5+dFzE8L1bOUi+gu8bl0lf+l/HvpHlM1EZXr62U0b1r7Nu2b6Un3a5J9/Mw+8a6n59zebL6KDrLO/nw3Fr8Bw==&lt;/diagram&gt;&lt;/mxfile&gt;" style="background-color: rgb(255, 255, 255);">
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="521px" height="824px" viewBox="-0.5 -0.5 521 824" content="&lt;mxfile&gt;&lt;diagram id=&quot;SZV7jK9JC3sHE44ie8k9&quot; name=&quot;Page-1&quot;&gt;7Zxfb+I4EMA/DVL7sKf8gUAfgbLd6mivot27R+SCG6yaOHLMtuynPztxEtLYS9qYqFJdoYqMnYD984xnxjY9f7p9vaIg3tyQNcQ9z1m/9vzLnucN/QH/LwT7TBCIKyEIKVpnIrcU3KPfUAodKd2hNUwqFRkhmKG4KlyRKIIrVpEBSslLtdoTwdVPjUEIa4L7FcB16X9ozTaZdDRwSvkPiMJN/smuI0seweo5pGQXyc/ref739C8r3oL8WbJ+sgFr8nIg8mc9f0oJYdm77esUYtG1ebdl933XlBbfm8KINbmhf5Hd8QvgnWz7FYXweUqiX5Ay+SXZPu+Y5AVtMYj41eSJROxelrj8GmAURvz9in80pFwgHoB4n45lASMxl642CK/nYE924gsmjHdYfjXZEIp+88cCLJ/JiymTw8MLKjXuxZ1c7HAphQmvc5e32n0jugGvlYpzkDApWBGMQZygx6IZW0BDFE0IY2QrK9U7VfazaCF8PRDJTr6CZAsZ3fMqsrQvee+rly/l4PKGUrY5GFieG8hBLQd0WDy5hMrfSK5qxvmoPWDc8yZCe0CM0r4ei5HL9auGm7eOpRgoeYZTggnnehmRjD/C+I0oHwIYPjHtAEhisEJROE/rXPZLyUK2W4gIv/cJp5qxQes1jAQ8wgADGSmBJSYoYmm/DCb8xVs5df4a9Ab8i0/5tVte85eoThkf1rwtAKUcIR8GL1AMBQXhQjGOI5ZMvaAhUxNIXQXSN+wwSplk7HIr5n4I3JYjwLAk9SBAXn5zazT9Ok1fQQ6DR4jvSIIYIuL5NKv7hugxaNVRiaINpMgUzIHXDOaoPcth3QRL9aQQMLgMhT1eRrvtI6RnvM18WAtdPc/UNrXWt2nhF9feGlzVGNACD5paZBPa62kN8gZEIVxKw3xWcJ56vbHzxfm2U+hRl9bZ1/HNvKoz3kKpvqk+W6wfxuq6DQ21Ea79P3NdxnJKs4DNAfZHHQIeHAHMyBJQ8IhWYiKWhEWzLeEWhIN+h4SD44RzLbaojaO+6NLLGtVQL8gWRFlqo8bRZjaMZDYKnMcQFzN3G8aBKrVh42BdHFyohPGkhoE4eKSNiqzX/N5gNwOtpep3OOMGWqxZeoMKm5ynN0rEqam2eY3WCtxlXiM4Fh9Z99k84C4TG0E9Pkrzj2Mcb/hUZpeLTDlVvlf1qvoKg91XOVW5g92Ksi5GulrMZn8vx/O7H+PJ7CFT3zVaWf0tSRca0srDUqE1or+6pYYq2eV0fHf9MJ5bwkYIq9aSTkV4qAqISsK3P28ms8Vyfn0v1RejxMJtA3eoSE+eDK5q1VcJt6rBFnJLyK7TcP41QlkXMFUoX15P7QxsiK6viJFORle3Nlija2dhs5QHXTpaQwVlm5fU5SU/QDPPFh6jaWKDTj2tcZCdsrHviWPfYv/iUdQmzLNuBXjxz834Vpjn2WI8tw60zi4XuvIp499hfUlQRdf6Vsbodhr7qvJWdtLVTbrvh9k01jWxGFh3kycggdmU+y+ibAfqu9W/8Ix7ZD3wfYcT3IZrRsXOnTakL3SLRnJN0K4SNSKcKcynOJxwoQtxl1Ji/SYDRJueUDBCVJeSKvbK2VNEhrCq5tiTYdUFO0t7MswkU2X6+FRQR9r5NNnFoqVwvWT7WJphtot5r1m4LeCqsscng6vSWBviHIY4LWmqssQn2vB4UY9XD07zndXinXMb8Jwm4Bk03ZZuZHuN66i8KavE71DiTHM+w6blYmqvTbcJZG93tdpTnG3Jdrlx2XV07rFAWwY+9pSuOb5d7lZ2Hd0+R6u6J0Db5T5l19Et9Ai09nS9cbidHsN2HdXuCkE3rBrmc5u/MEO3yzPYrqNLH4cHumvRGkLb5eFr16nvPz/YSWMj3s4i3pHT0NEKTAS8+XqiDXg/GvBKzfkUEa+rC4uEfU6FZ/aYrhmsJwx3+WX5K5Np2cEvefqz/wE=&lt;/diagram&gt;&lt;/mxfile&gt;" style="background-color: rgb(255, 255, 255);">
     <defs>
-        <clipPath id="mx-clip-4-31-212-26-0">
-            <rect x="4" y="31" width="212" height="26"/>
+        <clipPath id="mx-clip-4-31-262-26-0">
+            <rect x="4" y="31" width="262" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-65-212-26-0">
-            <rect x="4" y="65" width="212" height="26"/>
+        <clipPath id="mx-clip-4-65-262-26-0">
+            <rect x="4" y="65" width="262" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-91-212-26-0">
-            <rect x="4" y="91" width="212" height="26"/>
+        <clipPath id="mx-clip-4-91-262-26-0">
+            <rect x="4" y="91" width="262" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-117-212-26-0">
-            <rect x="4" y="117" width="212" height="26"/>
+        <clipPath id="mx-clip-4-117-262-26-0">
+            <rect x="4" y="117" width="262" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-143-212-26-0">
-            <rect x="4" y="143" width="212" height="26"/>
+        <clipPath id="mx-clip-4-143-262-26-0">
+            <rect x="4" y="143" width="262" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-169-212-26-0">
-            <rect x="4" y="169" width="212" height="26"/>
+        <clipPath id="mx-clip-4-169-262-26-0">
+            <rect x="4" y="169" width="262" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-239-212-26-0">
-            <rect x="4" y="239" width="212" height="26"/>
+        <clipPath id="mx-clip-4-195-262-26-0">
+            <rect x="4" y="195" width="262" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-265-212-26-0">
-            <rect x="4" y="265" width="212" height="26"/>
+        <clipPath id="mx-clip-4-269-262-26-0">
+            <rect x="4" y="269" width="262" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-4-295-262-26-0">
+            <rect x="4" y="295" width="262" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-4-321-262-26-0">
+            <rect x="4" y="321" width="262" height="26"/>
         </clipPath>
         <clipPath id="mx-clip-284-35-232-26-0">
             <rect x="284" y="35" width="232" height="26"/>
@@ -48,63 +54,109 @@
         <clipPath id="mx-clip-284-267-232-26-0">
             <rect x="284" y="267" width="232" height="26"/>
         </clipPath>
+        <clipPath id="mx-clip-4-401-262-26-0">
+            <rect x="4" y="401" width="262" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-4-427-262-26-0">
+            <rect x="4" y="427" width="262" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-4-453-262-26-0">
+            <rect x="4" y="453" width="262" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-4-479-262-26-0">
+            <rect x="4" y="479" width="262" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-4-505-262-26-0">
+            <rect x="4" y="505" width="262" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-4-589-262-26-0">
+            <rect x="4" y="589" width="262" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-4-615-262-26-0">
+            <rect x="4" y="615" width="262" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-4-641-262-26-0">
+            <rect x="4" y="641" width="262" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-4-667-262-26-0">
+            <rect x="4" y="667" width="262" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-4-693-262-26-0">
+            <rect x="4" y="693" width="262" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-4-719-262-26-0">
+            <rect x="4" y="719" width="262" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-4-799-262-26-0">
+            <rect x="4" y="799" width="262" height="26"/>
+        </clipPath>
     </defs>
     <g>
-        <path d="M 0 26 L 0 0 L 220 0 L 220 26" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
-        <path d="M 0 26 L 0 190 L 220 190 L 220 26" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 0 26 L 220 26" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 26 L 0 0 L 270 0 L 270 26" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 0 26 L 0 216 L 270 216 L 270 26" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 26 L 270 26" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
         <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" pointer-events="none" text-anchor="middle" font-size="12px">
-            <text x="109.5" y="17.5">
+            <text x="134.5" y="17.5">
                 GreekConvert
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-31-212-26-0)" font-size="12px">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-31-262-26-0)" font-size="12px">
             <text x="5.5" y="43.5">
                 + capital: bool
             </text>
         </g>
-        <path d="M 0 56 L 220 56" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-65-212-26-0)" font-size="12px">
+        <path d="M 0 56 L 270 56" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-65-262-26-0)" font-size="12px">
             <text x="5.5" y="77.5">
+                + create_greek_number(str,bool): GreekNumber
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-91-262-26-0)" font-size="12px">
+            <text x="5.5" y="103.5">
                 + cahange_capital(bool):
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-91-212-26-0)" font-size="12px">
-            <text x="5.5" y="103.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-117-262-26-0)" font-size="12px">
+            <text x="5.5" y="129.5">
                 + convert(int): str
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-117-212-26-0)" font-size="12px">
-            <text x="5.5" y="129.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-143-262-26-0)" font-size="12px">
+            <text x="5.5" y="155.5">
                 + convert_position(int): str
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-143-212-26-0)" font-size="12px">
-            <text x="5.5" y="155.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-169-262-26-0)" font-size="12px">
+            <text x="5.5" y="181.5">
                 + convert_to_arabic(str): int
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-169-212-26-0)" font-size="12px">
-            <text x="5.5" y="181.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-195-262-26-0)" font-size="12px">
+            <text x="5.5" y="207.5">
                 + convert_to_position_arabic(str): int
             </text>
         </g>
-        <path d="M 0 226 L 0 200 L 220 200 L 220 226" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 0 226 L 0 286 L 220 286 L 220 226" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 0 226 L 220 226" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 256 L 0 230 L 270 230 L 270 256" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 256 L 0 342 L 270 342 L 270 256" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 256 L 270 256" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
         <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" pointer-events="none" text-anchor="middle" font-size="12px">
-            <text x="109.5" y="217.5">
+            <text x="134.5" y="247.5">
                 RomanConver
             </text>
         </g>
-        <path d="M 0 230 L 220 230" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-239-212-26-0)" font-size="12px">
-            <text x="5.5" y="251.5">
+        <path d="M 0 260 L 270 260" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-269-262-26-0)" font-size="12px">
+            <text x="5.5" y="281.5">
                 + convert(int): str
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-265-212-26-0)" font-size="12px">
-            <text x="5.5" y="277.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-295-262-26-0)" font-size="12px">
+            <text x="5.5" y="307.5">
+                + create_roman_number(int): RomanNumber
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-321-262-26-0)" font-size="12px">
+            <text x="5.5" y="333.5">
                 + convert_to_arabic(str): int
             </text>
         </g>
@@ -166,5 +218,92 @@
             </text>
         </g>
         <path d="M 280 292 L 520 292" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 396 L 0 370 L 270 370 L 270 396" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 396 L 0 534 L 270 534 L 270 396" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 396 L 270 396" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" pointer-events="none" text-anchor="middle" font-size="12px">
+            <text x="134.5" y="387.5">
+                BaseNumberVirtual
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-401-262-26-0)" font-size="12px">
+            <text x="5.5" y="413.5">
+                + _number: int
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-427-262-26-0)" font-size="12px">
+            <text x="5.5" y="439.5">
+                + _value: list
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-453-262-26-0)" font-size="12px">
+            <text x="5.5" y="465.5">
+                + _positional: bool
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-479-262-26-0)" font-size="12px">
+            <text x="5.5" y="491.5">
+                + _capital: bool
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-505-262-26-0)" font-size="12px">
+            <text x="5.5" y="517.5">
+                + _supported_type: tuple
+            </text>
+        </g>
+        <path d="M 0 530 L 270 530" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 576 L 0 550 L 270 550 L 270 576" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 576 L 0 740 L 270 740 L 270 576" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 576 L 270 576" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" pointer-events="none" text-anchor="middle" font-size="12px">
+            <text x="134.5" y="567.5">
+                GreekNumber(BaseNumberVirtual)
+            </text>
+        </g>
+        <path d="M 0 580 L 270 580" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-589-262-26-0)" font-size="12px">
+            <text x="5.5" y="601.5">
+                + set_number(int):
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-615-262-26-0)" font-size="12px">
+            <text x="5.5" y="627.5">
+                + set_positional(bool):
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-641-262-26-0)" font-size="12px">
+            <text x="5.5" y="653.5">
+                + set_number(int):
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-667-262-26-0)" font-size="12px">
+            <text x="5.5" y="679.5">
+                + set_capital(bool):
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-693-262-26-0)" font-size="12px">
+            <text x="5.5" y="705.5">
+                + get_positional(): bool
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-719-262-26-0)" font-size="12px">
+            <text x="5.5" y="731.5">
+                + get_capital(): bool
+            </text>
+        </g>
+        <path d="M 0 786 L 0 760 L 270 760 L 270 786" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 786 L 0 820 L 270 820 L 270 786" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 786 L 270 786" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" pointer-events="none" text-anchor="middle" font-size="12px">
+            <text x="134.5" y="777.5">
+                RomanNumber(BaseNumberVirtual)
+            </text>
+        </g>
+        <path d="M 0 790 L 270 790" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-799-262-26-0)" font-size="12px">
+            <text x="5.5" y="811.5">
+                + get_value(): str
+            </text>
+        </g>
     </g>
 </svg>
