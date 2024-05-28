@@ -2,20 +2,21 @@ from ..DataStorage.Alphabet import GreekAlphabet, RomanNumberAlphabet
 
 class BaseNumberVirtual():
     _number: int
-    _value: str
+    _value: list
     _positional: bool
     _capital: bool
-
-    def __init__(self, number: int = None, value: str = None, positional: bool = False, capital: bool = False) -> None:
-        raise NotImplementedError("Это абстрактный класс")
-        self._number = number
-        self._value = number
+    _supported_type = (int,)
 
     def get_number(self) -> int:
         return self._number
     
     def set_number(self, number: int) -> None:
         self._number = number
+
+    def __init__(self, number: int = None, value: str = None, positional: bool = False, capital: bool = False) -> None:
+        raise NotImplementedError("Это абстрактный класс")
+        self._number = number
+        self._value = number
 
     def _create_instance(self, number: int) -> object:
         return self.__class__(number)
@@ -26,7 +27,7 @@ class BaseNumberVirtual():
     def __add__(self, other):
         if isinstance(other, BaseNumberVirtual):
             return self._create_instance(self._number + other._number)
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             return self._create_instance(self._number + other)
         else:
             raise TypeError("Неподдерживаемый тип операнда")
@@ -34,7 +35,7 @@ class BaseNumberVirtual():
     def __sub__(self, other):
         if isinstance(other, BaseNumberVirtual):
             return self._create_instance(self._number - other._number)
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             return self._create_instance(self._number - other)
         else:
             raise TypeError("Неподдерживаемый тип операнда")
@@ -42,7 +43,7 @@ class BaseNumberVirtual():
     def __mul__(self, other):
         if isinstance(other, BaseNumberVirtual):
             return self._create_instance(self._number * other._number)
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             return self._create_instance(self._number * other)
         else:
             raise TypeError("Неподдерживаемый тип операнда")
@@ -50,7 +51,7 @@ class BaseNumberVirtual():
     def __truediv__(self, other):
         if isinstance(other, BaseNumberVirtual):
             return self._create_instance(self._number / other._number)
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             return self._create_instance(self._number / other)
         else:
             raise TypeError("Неподдерживаемый тип операнда")
@@ -58,7 +59,7 @@ class BaseNumberVirtual():
     def __floordiv__(self, other):
         if isinstance(other, BaseNumberVirtual):
             return self._create_instance(self._number // other._number)
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             return self._create_instance(self._number // other)
         else:
             raise TypeError("Неподдерживаемый тип операнда")
@@ -66,7 +67,7 @@ class BaseNumberVirtual():
     def __mod__(self, other):
         if isinstance(other, BaseNumberVirtual):
             return self._create_instance(self._number % other._number)
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             return self._create_instance(self._number % other)
         else:
             raise TypeError("Неподдерживаемый тип операнда")
@@ -74,7 +75,7 @@ class BaseNumberVirtual():
     def __pow__(self, other):
         if isinstance(other, BaseNumberVirtual):
             return self._create_instance(self._number ** other._number)
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             return self._create_instance(self._number ** other)
         else:
             raise TypeError("Неподдерживаемый тип операнда")
@@ -82,7 +83,7 @@ class BaseNumberVirtual():
     def __eq__(self, other):
         if isinstance(other, BaseNumberVirtual):
             return self._number == other._number
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             return self._number == other
         else:
             raise TypeError("Неподдерживаемый тип операнда")
@@ -90,7 +91,7 @@ class BaseNumberVirtual():
     def __ne__(self, other):
         if isinstance(other, BaseNumberVirtual):
             return self._number != other._number
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             return self._number != other
         else:
             raise TypeError("Неподдерживаемый тип операнда")
@@ -98,7 +99,7 @@ class BaseNumberVirtual():
     def __lt__(self, other):
         if isinstance(other, BaseNumberVirtual):
             return self._number < other._number
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             return self._number < other
         else:
             raise TypeError("Неподдерживаемый тип операнда")
@@ -106,7 +107,7 @@ class BaseNumberVirtual():
     def __le__(self, other):
         if isinstance(other, BaseNumberVirtual):
             return self._number <= other._number
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             return self._number <= other
         else:
             raise TypeError("Неподдерживаемый тип операнда")
@@ -114,7 +115,7 @@ class BaseNumberVirtual():
     def __gt__(self, other):
         if isinstance(other, BaseNumberVirtual):
             return self._number > other._number
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             return self._number > other
         else:
             raise TypeError("Неподдерживаемый тип операнда")
@@ -122,7 +123,7 @@ class BaseNumberVirtual():
     def __ge__(self, other):
         if isinstance(other, BaseNumberVirtual):
             return self._number >= other._number
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             return self._number >= other
         else:
             raise TypeError("Неподдерживаемый тип операнда")
@@ -131,7 +132,7 @@ class BaseNumberVirtual():
         if isinstance(other, BaseNumberVirtual):
             self._number += other._number
             self._update_value(self._number)
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             self._number += other
             self._update_value(self._number)
         else:
@@ -142,7 +143,7 @@ class BaseNumberVirtual():
         if isinstance(other, BaseNumberVirtual):
             self._number -= other._number
             self._update_value(self._number)
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             self._number -= other
             self._update_value(self._number)
         else:
@@ -153,7 +154,7 @@ class BaseNumberVirtual():
         if isinstance(other, BaseNumberVirtual):
             self._number *= other._number
             self._update_value(self._number)
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             self._number *= other
             self._update_value(self._number)
         else:
@@ -164,7 +165,7 @@ class BaseNumberVirtual():
         if isinstance(other, BaseNumberVirtual):
             self._number /= other._number
             self._update_value(self._number)
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             self._number /= other
             self._update_value(self._number)
         else:
@@ -175,7 +176,7 @@ class BaseNumberVirtual():
         if isinstance(other, BaseNumberVirtual):
             self._number //= other._number
             self._update_value(self._number)
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             self._number //= other
             self._update_value(self._number)
         else:
@@ -186,7 +187,7 @@ class BaseNumberVirtual():
         if isinstance(other, BaseNumberVirtual):
             self._number %= other._number
             self._update_value(self._number)
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             self._number %= other
             self._update_value(self._number)
         else:
@@ -197,7 +198,7 @@ class BaseNumberVirtual():
         if isinstance(other, BaseNumberVirtual):
             self._number **= other._number
             self._update_value(self._number)
-        elif isinstance(other, (int,)):
+        elif isinstance(other, self._supported_type):
             self._number **= other
             self._update_value(self._number)
         else:
@@ -211,17 +212,6 @@ class BaseNumberVirtual():
         return +self._number
 
 class GreekNumber(BaseNumberVirtual):
-
-    def __init__(self, number: int = None, value: str = None, positional: bool = False, capital: bool = False) -> None:
-        self._capital = capital
-        if number == None:
-            raise ValueError("Необходимо указать число")
-        if not value and not positional:
-            self._convert_arabic_to_greek(number)
-        elif not value and positional:
-            self._convert_arabic_to_position_greek(number)
-        self._number = number
-        self._positional = positional
 
     def set_number(self, number: int) -> None:
         self._number = number
@@ -250,6 +240,17 @@ class GreekNumber(BaseNumberVirtual):
     def get_capital(self) -> bool:
         return self._capital
 
+    def __init__(self, number: int = None, value: str = None, positional: bool = False, capital: bool = False) -> None:
+        self._capital = capital
+        if number == None:
+            raise ValueError("Необходимо указать число")
+        if not value and not positional:
+            self._convert_arabic_to_greek(number)
+        elif not value and positional:
+            self._convert_arabic_to_position_greek(number)
+        self._number = number
+        self._positional = positional
+
     def _create_instance(self, number: int) -> object:
         return self.__class__(number, positional=self._positional, capital=self._capital)
 
@@ -258,10 +259,13 @@ class GreekNumber(BaseNumberVirtual):
             yield item
 
     def __str__(self) -> str:
-        return f"{self._value}"
+        return f"{''.join(self._value)}"
 
     def __repr__(self) -> str:
-        return f"{self._value}"
+        return f"{''.join(self._value)}"
+
+    def __len__(self) -> int:
+        return len(self._value)
 
     def get_str(self) -> str:
         """Преобразовавние Unicode греческого числа в название
@@ -309,7 +313,7 @@ class GreekNumber(BaseNumberVirtual):
                         break
                 else:
                     continue
-        self._value = ''.join(display_numerals)
+        self._value = display_numerals
 
     def _convert_arabic_to_position_greek(self, number: int) -> str:
         if not (isinstance(number, int)):
@@ -341,6 +345,9 @@ class GreekNumber(BaseNumberVirtual):
 
 class RomanNumber(BaseNumberVirtual):
 
+    def get_value(self) -> str:
+        return ''.join(self._value)
+
     def __init__(self, number: int) -> None:
         if not number:
             raise ValueError("Необходимо указать число")
@@ -359,7 +366,7 @@ class RomanNumber(BaseNumberVirtual):
                 display_numerals.append(numeral * count)
             else:
                 continue
-        self._value = ''.join(display_numerals)
+        self._value = display_numerals
 
     def __iter__(self):
         for item in self._value:
@@ -369,10 +376,10 @@ class RomanNumber(BaseNumberVirtual):
         return self._value[item]
 
     def __str__(self) -> str:
-        return f"{self._value}"
+        return f"{''.join(self._value)}"
 
     def __repr__(self) -> str:
-        return f"{self._value}"
+        return f"{''.join(self._value)}"
 
     def __len__(self) -> int:
         return len(self._value)

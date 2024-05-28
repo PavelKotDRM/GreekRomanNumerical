@@ -2,13 +2,6 @@ from .DataStorage.Alphabet import GreekAlphabet, RomanNumberAlphabet
 from .DataType.GreekRomanType import GreekNumber, RomanNumber
 
 class GreekConvert():
-    def __init__(self, capital:bool=False):
-        """Инициализация класса
-
-        Args:
-            capital (bool, optional): Верхний или нижний регист. Defaults to False.
-        """
-        self.capital = capital
 
     def change_capital(self, capital:bool):
         """Изменение регистра
@@ -73,6 +66,14 @@ class GreekConvert():
             int: Преобразованное число
         """
         return self._convert_position_greek_to_arabic(numeral)
+
+    def __init__(self, capital:bool=False):
+        """Инициализация класса
+
+        Args:
+            capital (bool, optional): Верхний или нижний регист. Defaults to False.
+        """
+        self.capital = capital
     
     def _convert_arabic_to_greek(self, number: int) -> str:
         if not (isinstance(number, int)):
@@ -160,7 +161,7 @@ class GreekConvert():
         if not (isinstance(greek_numeral, str)):
             raise TypeError("Число должно быть строкой и иметь тип str")
         out_num = 0
-        for index, item in enumerate(reversed(greek_numeral.value.split("~"))):
+        for index, item in enumerate(reversed(greek_numeral.split("~"))):
             #print(f"index: {index}, item: {item}, 1000**{index}")
             if item == "_":
                 continue
@@ -221,17 +222,6 @@ class GreekConvert():
         return final_str
 
 class RomanConvert():
-
-    def create_roman_number(self, number: int) -> RomanNumber:
-        """Создание римского числа
-
-        Args:
-            number (int): Число
-
-        Returns:
-            RomanNumber: Римское число
-        """
-        return RomanNumber(number=number)
     
     def convert(self, number: int) -> str:
         """Преобразование арабского числа в римское
@@ -243,6 +233,17 @@ class RomanConvert():
             RomanNumber: Римское число
         """
         return self._convert_arabic_to_roman(number)
+    
+    def create_roman_number(self, number: int) -> RomanNumber:
+        """Создание римского числа
+
+        Args:
+            number (int): Число
+
+        Returns:
+            RomanNumber: Римское число
+        """
+        return RomanNumber(number=number)
     
     def convert_to_arabic(self, roman: str) -> int:
         """Преобразование римского числа в арабское
