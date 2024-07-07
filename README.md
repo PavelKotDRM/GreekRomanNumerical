@@ -48,3 +48,6 @@
 
 **Схема пректа**  
 ![ScheemProject](./Diagrams/ArabicToRoman.drawio.svg)
+
+## License
+Apache License 2.0
