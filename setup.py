@@ -16,9 +16,9 @@ setup(
   packages=find_packages(),
   classifiers=[
     'Programming Language :: Python :: 3.11',
-    'License :: Apache License 2.0'
+    'License :: OSI Approved :: Apache Software License'
   ],
-  keywords='python greek roman',
+  keywords='python,greek,roman',
   project_urls={
     'Documentation': 'https://github.com/PavelKotDRM/GreekRomanNumerical'
   },
