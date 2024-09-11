@@ -21,7 +21,8 @@ class GreekConvert():
         Returns:
             GreekNumber: The Greek number
         """
-        return GreekNumber(number=number, positional=positional, capital=self._capital)
+        return GreekNumber(number=number, positional=positional, 
+                           capital=self._capital, debug=self._debug)
 
     def convert(self, number: int) -> str:
         """Converting an Arabic number to a Greek one
@@ -32,7 +33,8 @@ class GreekConvert():
         Returns:
             str: The converted number
         """
-        return GreekNumber(number=number, positional=False, capital=self._capital)._value
+        return GreekNumber(number=number, positional=False, 
+                           capital=self._capital, debug=self._debug)._value
         
     def convert_position(self, number: int) -> str:
         """Converting an Arabic number to a positional Greek number
@@ -43,7 +45,8 @@ class GreekConvert():
         Returns:
             str: The converted number
         """
-        return GreekNumber(number=number, positional=True, capital=self._capital)._value
+        return GreekNumber(number=number, positional=True, 
+                           capital=self._capital, debug=self._debug)._value
 
     def convert_to_arabic(self, numeral: str) -> int:
         """Converting a Greek or Roman number to an Arabic one
@@ -54,7 +57,8 @@ class GreekConvert():
         Returns:
             int: The converted number
         """
-        return GreekNumber(value=numeral, positional=False, capital=self._capital).get_number()
+        return GreekNumber(value=numeral, positional=False, 
+                           capital=self._capital, debug=self._debug).get_number()
     
     def covert_to_position_arabic(self, numeral: str) -> int:
         """Converting a positional Greek number to an Arabic one
@@ -65,14 +69,16 @@ class GreekConvert():
         Returns:
             int: The converted number
         """
-        return GreekNumber(value=numeral, positional=True, capital=self._capital).get_number()
+        return GreekNumber(value=numeral, positional=True, 
+                           capital=self._capital, debug=self._debug).get_number()
 
-    def __init__(self, capital:bool=False):
+    def __init__(self, capital:bool=False, debug:bool=False):
         """Initializing a class
 
         Args:
             capital (bool, optional): Upper or lower case. Defaults to False.
         """
+        self._debug = debug
         self._capital = capital
 
     def unicode_to_name(self, greek_numeral: str) -> str:
@@ -173,7 +179,7 @@ class RomanConvert():
                 display_numerals.append(numeral * count)
             else:
                 continue
-        return ''.join(display_numerals)#''.join(display_numerals)
+        return ''.join(display_numerals)
 
     def _convert_roman_to_arabic(self, roman: str) -> int:
         number = 0

@@ -19,8 +19,8 @@ There are proprietary data types `GreekNumber` and `RomanNumber` for working wit
 
 - `change_capital`: A flag that controls the conversion of characters to upper or lower case.
 - `create_greek_number`: creates the `GreekNumber` class
-- `convert` — the function of converting an Arabic number to a Greek one, for example, the number `20005003001` is converted to `Κ___Ε__Γ_Α'.
-- `convert_position` is a function for converting an Arabic number to a Greek number according to a given pattern, for example, the number `20005003001` is converted to `Κ~Ε~Γ~Α'.
+- `convert` — the function of converting an Arabic number to a Greek one, for example, the number `20005003001` is converted to `Κ___Ε__Γ_Α`.
+- `convert_position` is a function for converting an Arabic number to a Greek number according to a given pattern, for example, the number `20005003001` is converted to `Κ~Ε~Γ~Α`.
 - `convert_to_arabic` is a function for converting a Greek number to an Arabic one.
 - `covert_to_position_arabic` — This function is used in combination with `convert_position` and converts a Greek number to an Arabic one.
 - `unicode_to_name` — the function converts a Unicode character into its name.

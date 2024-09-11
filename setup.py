@@ -6,7 +6,7 @@ def readme():
 
 setup(
   name='GreekRomanUtils',
-  version='1.0.2',
+  version='1.0.3',
   author='PKALab',
   author_email='kpalab@pkotlyarov.ru',
   description='The module converts Arabic numerals to Greek and Roman numbers',

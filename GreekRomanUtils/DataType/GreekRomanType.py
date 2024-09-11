@@ -346,26 +346,25 @@ class GreekNumber(BaseNumberVirtual):
         input_num = number
         derative_remains_list = []
         if self._debug:
-            print(f"num = {number}")
+            print(f"_convert_arabic_to_position_greek input = {number}")
         while input_num > 0:
             if self._debug:
-                print(f"numder: {number}, numder % 1000: {number % 1000}, numder // 1000: {number // 1000}")
+                print(f"numder: {input_num}, numder % 1000: {input_num % 1000}, numder // 1000: {input_num // 1000}")
             derative_remains_list.append(input_num % 1000)
             input_num = input_num // 1000
         for item in reversed(derative_remains_list):
             if self._debug:
                 print(f"result = {result}, i = {item}")
-            if item == 0:
-                result += "_"
-                result += "~"
-                continue
+            if len(result) > 0:
+                if result[-1] == " ":
+                    result = result.strip() + "~"
             for key, _value in reversed(reverse_dict.items()):
                 if item // key > 0:
                     result += _value
                     item = item % key
                     if self._debug:
                         print(f"result = {result}, i = {item} in for, key = {key}, _value = {_value}")
-            result += "~"
+            result += " "
         self._value = result.strip()
 
     def _convert_greek_to_arabic(self, greek_numeral: str) -> int:
@@ -379,6 +378,8 @@ class GreekNumber(BaseNumberVirtual):
             if self._capital 
             else GreekAlphabet.GREEK_NUMERAL_DICT
         )
+        if self._debug:
+            print(f"_convert_greek_to_arabic input = {greek_numeral}")
         for char in greek_numeral:
             if char == "_":
                 power_num += 1
@@ -392,6 +393,9 @@ class GreekNumber(BaseNumberVirtual):
                 power_num = 0
             else:
                 raise ValueError(f"Invalid symbol: {char}")
+        if power_num > 0:
+            last_number *= 1000 ** power_num
+            power_num = 0
         number += last_number
         self._number = number
     
@@ -404,11 +408,11 @@ class GreekNumber(BaseNumberVirtual):
             if self._capital 
             else GreekAlphabet.GREEK_NUMERAL_DICT
         )
+        if self._debug:
+            print(f"_convert_position_greek_to_arabic input = {greek_numeral}")
         for index, item in enumerate(reversed(greek_numeral.split("~"))):
             if self._debug:
                 print(f"index: {index}, item: {item}, 1000**{index}")
-            if item == "_":
-                continue
             for item_sub in item:
                 if self._debug:
                     print(f"item_sub: {item_sub}")
