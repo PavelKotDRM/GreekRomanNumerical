@@ -4,257 +4,162 @@ from .DataType.GreekRomanType import GreekNumber, RomanNumber
 class GreekConvert():
 
     def change_capital(self, capital:bool):
-        """Изменение регистра
+        """Changing the case
 
         Args:
-            capital (bool): Верхний или нижний регист
+            capital (bool): Upper or lower register
         """
-        self.capital = capital
+        self._capital = capital
 
     def create_greek_number(self, number: str, positional: bool=False) -> GreekNumber:
-        """Создание греческого числа
+        """Creating a Greek number
 
         Args:
-            value (str): Значение числа
-            positional (bool, optional): Позиционное или нет. Defaults to False.
+            value (str): The value of the number
+            positional (bool, optional): Positional or not. Defaults to False.
 
         Returns:
-            GreekNumber: Греческое число
+            GreekNumber: The Greek number
         """
-        return GreekNumber(number=number, positional=positional, capital=self.capital)
+        return GreekNumber(number=number, positional=positional, capital=self._capital)
 
     def convert(self, number: int) -> str:
-        """Преобразование арабского числа в греческое
+        """Converting an Arabic number to a Greek one
 
         Args:
-            number (int): Число для преобразования
+            number (int): The number to convert
 
         Returns:
-            str: Преобразованное число
+            str: The converted number
         """
-        return self._convert_arabic_to_greek(number)
+        return GreekNumber(number=number, positional=False, capital=self._capital)._value
         
     def convert_position(self, number: int) -> str:
-        """Преобразование арабского числа в позиционное греческое
+        """Converting an Arabic number to a positional Greek number
 
         Args:
-            number (int): Число для преобразования
+            number (int): The number to convert
 
         Returns:
-            str: Преобразованное число
+            str: The converted number
         """
-        return self._convert_arabic_to_position_greek(number)
+        return GreekNumber(number=number, positional=True, capital=self._capital)._value
 
     def convert_to_arabic(self, numeral: str) -> int:
-        """Преобразование греческого или римского числа в арабское
+        """Converting a Greek or Roman number to an Arabic one
 
         Args:
-            numeral (str): Число для преобразования
+            numeral (str): The number to convert
 
         Returns:
-            int: Преобразованное число
+            int: The converted number
         """
-        return self._convert_greek_to_arabic(numeral)
+        return GreekNumber(value=numeral, positional=False, capital=self._capital).get_number()
     
     def covert_to_position_arabic(self, numeral: str) -> int:
-        """Преобразование позиционного греческого числа в арабское
+        """Converting a positional Greek number to an Arabic one
 
         Args:
-            numeral (str): Число для преобразования
+            numeral (str): The number to convert
 
         Returns:
-            int: Преобразованное число
+            int: The converted number
         """
-        return self._convert_position_greek_to_arabic(numeral)
+        return GreekNumber(value=numeral, positional=True, capital=self._capital).get_number()
 
     def __init__(self, capital:bool=False):
-        """Инициализация класса
+        """Initializing a class
 
         Args:
-            capital (bool, optional): Верхний или нижний регист. Defaults to False.
+            capital (bool, optional): Upper or lower case. Defaults to False.
         """
-        self.capital = capital
-    
-    def _convert_arabic_to_greek(self, number: int) -> str:
-        if not (isinstance(number, int)):
-            raise TypeError("Число должно быть целым числом и иметь тип int")
-        greek_numerals_list = GreekAlphabet.GREEK_NUMERAL_LIST_CAPITAL if self.capital else GreekAlphabet.GREEK_NUMERAL_LIST
-        display_numerals = []
-        hass_pow = False
-        power_value = 0
-        input_num = number
-        while input_num > 0:
-            for numeral, value in reversed(greek_numerals_list):
-                power_value = 0
-                if len(str(input_num)) > 3:
-                    power_value = ((len(str(input_num)) - 1)//3)
-                    value *= 1000**power_value
-                    hass_pow = True
-                if input_num // value > 0:
-                    # print(f"Processing simpol:{numeral}, целое:{number // value}, остаток:{number % value}, число:{number}, значение:{value}, степень:{(len(str(number)) - 1)//3}")
-                    input_num = input_num % value
-                    display_numerals.append(numeral)
-                    if power_value:
-                        for _ in range(power_value):
-                            display_numerals.append("_")
-                    if hass_pow:
-                        hass_pow = False
-                        break
-                else:
-                    continue
-        return ''.join(display_numerals)#''.join(display_numerals)
-    
-    def _convert_arabic_to_position_greek(self, number: int) -> str:
-        if not (isinstance(number, int)):
-            raise TypeError("Число должно быть целым числом и иметь тип int")
-        greek_numerals_dict = GreekAlphabet.GREEK_NUMERAL_DICT_CAPITAL if self.capital else GreekAlphabet.GREEK_NUMERAL_DICT
-        reverse_dict = {v: k for k, v in greek_numerals_dict.items()}
-        num_greek_str = ""
-        input_num = number
-        derative_remains_list = []
-        #print(f"num = {numder}")
-        while input_num > 0:
-            #print(f"numder: {numder}, numder % 1000: {numder % 1000}, numder // 1000: {numder // 1000}")
-            derative_remains_list.append(input_num % 1000)
-            input_num = input_num // 1000
-        for item in reversed(derative_remains_list):
-            #print(f"num_greek_str = {num_greek_str}, i = {item}")
-            if item == 0:
-                num_greek_str += "_"
-                num_greek_str += "~"
-                continue
-            for key, value in reversed(reverse_dict.items()):
-                if item // key > 0:
-                    num_greek_str += value
-                    item = item % key
-                    #print(f"num_greek_str = {num_greek_str}, i = {item} in for, key = {key}, value = {value}")
-            num_greek_str += "~"
-        return num_greek_str[:-1]#num_greek_str[:-1]
-        
-    def _convert_greek_to_arabic(self, greek_numeral: str) -> int:
-        number = 0
-        if not (isinstance(greek_numeral, str)):
-            raise TypeError("Число должно быть строкой и иметь тип str")
-        power_num = 0
-        last_number = 0
-        for char in greek_numeral:
-            if char == "_":
-                power_num += 1
-                continue
-            # print(f"Processing simpol:{char}, число:{number}, значение:{GREEK_NUMERAL_DICT[char]}, степень:{power_num}")
-            if char in GreekAlphabet.GREEK_NUMERAL_DICT:
-                last_number *= 1000 ** power_num
-                number += last_number
-                last_number = GreekAlphabet.GREEK_NUMERAL_DICT[char]
-                power_num = 0
-            elif char in GreekAlphabet.GREEK_NUMERAL_DICT_CAPITAL:
-                last_number *= 1000 ** power_num
-                number += last_number
-                last_number = GreekAlphabet.GREEK_NUMERAL_DICT_CAPITAL[char]
-                power_num = 0
-            else:
-                raise ValueError("Неверный символ")
-        number += last_number
-        return number
-    
-    def _convert_position_greek_to_arabic(self, greek_numeral: str) -> int:
-        if not (isinstance(greek_numeral, str)):
-            raise TypeError("Число должно быть строкой и иметь тип str")
-        out_num = 0
-        for index, item in enumerate(reversed(greek_numeral.split("~"))):
-            #print(f"index: {index}, item: {item}, 1000**{index}")
-            if item == "_":
-                continue
-            for item_sub in item:
-                #print(f"item_sub: {item_sub}")
-                if item_sub in GreekAlphabet.GREEK_NUMERAL_DICT:
-                    out_num += GreekAlphabet.GREEK_NUMERAL_DICT[item_sub] * 1000**index
-                elif item_sub in GreekAlphabet.GREEK_NUMERAL_DICT_CAPITAL:
-                    out_num += GreekAlphabet.GREEK_NUMERAL_DICT_CAPITAL[item_sub] * 1000**index
-                else:
-                    raise ValueError("Неверный символ")
-        return out_num
+        self._capital = capital
 
     def unicode_to_name(self, greek_numeral: str) -> str:
-        """Преобразовавние Unicode греческого числа в название
+        """Convert Unicode Greek numeral to name
 
         Args:
-            greek_numeral (str): Греческое число в Unicode
+            greek_numeral (str): Greek numeral in Unicode
 
         Raises:
-            ValueError: Если встречен неверный символ
+            ValueError: If invalid symbol is encountered
 
         Returns:
-            str: Название греческого числа
+            str: Name of the Greek numeral
         """
-        temp_str = ""
-        for item in greek_numeral:
-            if item in GreekAlphabet.GREEK_ALPHABET_DICT:
-                temp_str += GreekAlphabet.GREEK_ALPHABET_DICT[item] + " "
-            elif item in GreekAlphabet.GREEK_ALPHABET_DICT_CAPITAL:
-                temp_str += GreekAlphabet.GREEK_ALPHABET_DICT_CAPITAL[item] + " "
+        result = ""
+        greek_alphabet = (
+            GreekAlphabet.GREEK_ALPHABET_DICT_CAPITAL
+            if self._capital
+            else GreekAlphabet.GREEK_ALPHABET_DICT
+        )
+        for char in greek_numeral:
+            if char in greek_alphabet:
+                result += greek_alphabet[char] + " "
             else:
-                raise ValueError("Неверный символ")
-        return temp_str[:-1]
+                raise ValueError(f"Invalid symbol: {char}")
+        return result.strip()
 
     def name_to_unicode(self, name: str) -> str:
-        """Преобразование названия греческого числа в Unicode
+        """Convert name of Greek numeral to its Unicode representation
 
         Args:
-            name (str): Название греческого числа
+            name (str): Name of Greek numeral
 
         Raises:
-            ValueError: Если встречен неверное название
+            ValueError: If invalid name is encountered
 
         Returns:
-            str: Греческое число в Unicode
+            str: Unicode representation of Greek numeral
         """
-        reverse_dict = {v: k for k, v in GreekAlphabet.GREEK_ALPHABET_DICT.items()}
-        reverse_dic_capital = {v: k for k, v in GreekAlphabet.GREEK_ALPHABET_DICT_CAPITAL.items()}
-        final_str = ""
-        for item in name.split():
-            if item in reverse_dict:
-                final_str += reverse_dict[item]
-            elif item in reverse_dic_capital:
-                final_str += reverse_dic_capital[item]
+        greek_alphabet_dict = GreekAlphabet.GREEK_ALPHABET_DICT
+        greek_alphabet_dict_capital = GreekAlphabet.GREEK_ALPHABET_DICT_CAPITAL
+        reverse_dict = {v: k for k, v in greek_alphabet_dict.items()}
+        reverse_dict_capital = {v: k for k, v in greek_alphabet_dict_capital.items()}
+        result = ""
+        for word in name.split():
+            if word in reverse_dict:
+                result += reverse_dict[word]
+            elif word in reverse_dict_capital:
+                result += reverse_dict_capital[word]
             else:
-                raise ValueError("Неверное название")
-        return final_str
+                raise ValueError(f"Invalid name: {word}")
+        return result
 
 class RomanConvert():
     
-    def convert(self, number: int) -> str:
-        """Преобразование арабского числа в римское
+    def convert(self, arabic_number: int) -> str:
+        """Convert Arabic number to Roman numeral
 
         Args:
-            number (int): Число для преобразования
+            arabic_number (int): Number to convert
 
         Returns:
-            RomanNumber: Римское число
+            str: Roman numeral representation
         """
-        return self._convert_arabic_to_roman(number)
+        return self._convert_arabic_to_roman(arabic_number)
     
-    def create_roman_number(self, number: int) -> RomanNumber:
-        """Создание римского числа
+    def create_roman_number(self, arabic_number: int) -> RomanNumber:
+        """Create a Roman numeral from an Arabic number
 
         Args:
-            number (int): Число
+            arabic_number (int): The number to convert
 
         Returns:
-            RomanNumber: Римское число
+            RomanNumber: The Roman numeral representation
         """
-        return RomanNumber(number=number)
+        return RomanNumber(arabic_number)
     
-    def convert_to_arabic(self, roman: str) -> int:
-        """Преобразование римского числа в арабское
+    def convert_to_arabic(self, roman_numeral: str) -> int:
+        """Convert Roman numeral to Arabic number
 
         Args:
-            roman (str): Римское число
+            roman_numeral (str): Roman numeral to convert
 
         Returns:
-            int: Арабское число
+            int: Arabic number representation
         """
-        return self._convert_roman_to_arabic(roman)
+        return self._convert_roman_to_arabic(roman_numeral)
     
     def _convert_arabic_to_roman(self, number: int) -> RomanNumber:
         if not (isinstance(number, int)):
@@ -281,5 +186,5 @@ class RomanConvert():
                 number += RomanNumberAlphabet.ROMAN_NUMERAL_DICT[roman[i]]
                 i += 1
             else:
-                raise ValueError("Неверный символ")
+                raise ValueError(f"Invalid name: {roman}")
         return number

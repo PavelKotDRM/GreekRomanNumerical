@@ -6,7 +6,7 @@ def readme():
 
 setup(
   name='GreekRomanUtils',
-  version='1.0.0',
+  version='1.0.1',
   author='PKALab',
   author_email='kpalab@pkotlyarov.ru',
   description='The module converts Arabic numerals to Greek and Roman numbers',
@@ -16,6 +16,7 @@ setup(
   packages=find_packages(),
   classifiers=[
     'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
     'License :: OSI Approved :: Apache Software License'
   ],
   keywords='python,greek,roman',
