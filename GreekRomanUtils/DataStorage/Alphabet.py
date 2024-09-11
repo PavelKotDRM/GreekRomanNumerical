@@ -3,21 +3,21 @@ class GreekAlphabet:
         'α': 'alpha', 'β': 'beta', 'γ': 'gamma', 'δ': 'delta', 'ε': 'epsilon',
         'ζ': 'zeta', 'η': 'eta', 'θ': 'theta', 'ι': 'iota', 'κ': 'kappa',
         'λ': 'lambda', 'μ': 'mu', 'ν': 'nu', 'ξ': 'xi', 'ο': 'omicron',
-        'π': 'pi', 'ρ': 'rho', 'σ': 'sigma', 'τ': 'tau', 'υ': 'upsilon',
-        'φ': 'phi', 'χ': 'chi', 'ψ': 'psi', 'ω': 'omega', 'Ϝ': 'digamma',
+        'π': 'pi', "ϙ": 'koppa', 'ρ': 'rho', 'σ': 'sigma', 'τ': 'tau', 'υ': 'upsilon',
+        'φ': 'phi', 'χ': 'chi', 'ψ': 'psi', 'ω': 'omega', 'ϝ': 'digamma', "ϡ": 'Sampi',
         '_': 'underscape', '~': 'macron'
     }
     GREEK_ALPHABET_DICT_CAPITAL = {
         'Α': 'Alpha', 'Β': 'Beta', 'Γ': 'Gamma', 'Δ': 'Delta', 'Ε': 'Epsilon',
         'Ζ': 'Zeta', 'Η': 'Eta', 'Θ': 'Theta', 'Ι': 'Iota', 'Κ': 'Kappa',
         'Λ': 'Lambda', 'Μ': 'Mu', 'Ν': 'Nu', 'Ξ': 'Xi', 'Ο': 'Omicron',
-        'Π': 'Pi', 'Ρ': 'Rho', 'Σ': 'Sigma', 'Τ': 'Tau', 'Υ': 'Upsilon',
-        'Φ': 'Phi', 'Χ': 'Chi', 'Ψ': 'Psi', 'Ω': 'Omega', 'Ϝ': 'Digamma',
+        'Π': 'Pi', 'Ϙ': 'Koppa', 'Ρ': 'Rho', 'Σ': 'Sigma', 'Τ': 'Tau', 'Υ': 'Upsilon',
+        'Φ': 'Phi', 'Χ': 'Chi', 'Ψ': 'Psi', 'Ω': 'Omega', 'Ϝ': 'Digamma', "Ϡ": 'Sampi',
         '_': 'Underscape', '~': 'Macron'
     }
     GREEK_NUMERAL_LIST = [
         ("α", 1), ("β", 2), ("γ", 3),
-        ("δ", 4), ("ε", 5), ("Ϝ", 6),
+        ("δ", 4), ("ε", 5), ("ϝ", 6),
         ("ζ", 7), ("η", 8), ("θ", 9),
         ("ι", 10), ("κ", 20), ("λ", 30),
         ("μ", 40), ("ν", 50), ("ξ", 60),
@@ -39,7 +39,7 @@ class GreekAlphabet:
     ]
     GREEK_NUMERAL_DICT = {
         "α": 1, "β": 2, "γ": 3,
-        "δ": 4, "ε": 5, "Ϝ": 6,
+        "δ": 4, "ε": 5, "ϝ": 6,
         "ζ": 7, "η": 8, "θ": 9,
         "ι": 10, "κ": 20, "λ": 30,
         "μ": 40, "ν": 50, "ξ": 60,
