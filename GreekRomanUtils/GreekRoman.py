@@ -21,7 +21,7 @@ class GreekConvert():
         Returns:
             GreekNumber: The Greek number
         """
-        return GreekNumber(number=number, positional=positional, 
+        return GreekNumber(value=number, positional=positional, 
                            capital=self._capital, debug=self._debug)
 
     def convert(self, number: int) -> str:
@@ -33,8 +33,9 @@ class GreekConvert():
         Returns:
             str: The converted number
         """
-        return GreekNumber(number=number, positional=False, 
-                           capital=self._capital, debug=self._debug)._value
+        greek_num = GreekNumber(number=number, positional=False, 
+                                capital=self._capital, debug=self._debug)
+        return str(greek_num)
         
     def convert_position(self, number: int) -> str:
         """Converting an Arabic number to a positional Greek number
@@ -45,8 +46,9 @@ class GreekConvert():
         Returns:
             str: The converted number
         """
-        return GreekNumber(number=number, positional=True, 
-                           capital=self._capital, debug=self._debug)._value
+        greek_num = GreekNumber(number=number, positional=True, 
+                                capital=self._capital, debug=self._debug)
+        return str(greek_num)
 
     def convert_to_arabic(self, numeral: str) -> int:
         """Converting a Greek or Roman number to an Arabic one
@@ -57,8 +59,11 @@ class GreekConvert():
         Returns:
             int: The converted number
         """
-        return GreekNumber(value=numeral, positional=False, 
+        result = GreekNumber(value=numeral, positional=False, 
                            capital=self._capital, debug=self._debug).get_number()
+        if result is None:
+            raise ValueError("Failed to convert Greek numeral to Arabic")
+        return result
     
     def covert_to_position_arabic(self, numeral: str) -> int:
         """Converting a positional Greek number to an Arabic one
@@ -69,8 +74,11 @@ class GreekConvert():
         Returns:
             int: The converted number
         """
-        return GreekNumber(value=numeral, positional=True, 
+        result = GreekNumber(value=numeral, positional=True, 
                            capital=self._capital, debug=self._debug).get_number()
+        if result is None:
+            raise ValueError("Failed to convert positional Greek numeral to Arabic")
+        return result
 
     def __init__(self, capital:bool=False, debug:bool=False):
         """Initializing a class
@@ -167,7 +175,7 @@ class RomanConvert():
         """
         return self._convert_roman_to_arabic(roman_numeral)
     
-    def _convert_arabic_to_roman(self, number: int) -> RomanNumber:
+    def _convert_arabic_to_roman(self, number: int) -> str:
         if not (isinstance(number, int)):
             raise TypeError("Число должно быть целым числом и иметь тип int")
         display_numerals = []

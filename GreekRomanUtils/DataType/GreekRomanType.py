@@ -1,20 +1,21 @@
 from ..DataStorage.Alphabet import GreekAlphabet, RomanNumberAlphabet
+from typing import Optional, Union
 
 class BaseNumberVirtual():
-    _number: int
-    _value: list
+    _number: Union[int, None]
+    _value: Union[str, list, None]
     _positional: bool
     _capital: bool
     _debug: bool
     _supported_type = (int,)
 
-    def get_number(self) -> int:
+    def get_number(self) -> Union[int, None]:
         return self._number
     
-    def set_number(self, number: int) -> None:
+    def set_number(self, number: Union[int, None]) -> None:
         self._number = number
 
-    def __init__(self, number: int = None, value: str = None, positional: bool = False, capital: bool = False, debug: bool = False) -> None:
+    def __init__(self, number: Optional[int] = None, value: Optional[str] = None, positional: bool = False, capital: bool = False, debug: bool = False) -> None:
         raise NotImplementedError("This is an abstract class")
         self._number = number
         self._value = number
@@ -22,11 +23,21 @@ class BaseNumberVirtual():
         self._capital = capital
         self._debug = debug
 
-    def _create_instance(self, number: int) -> object:
-        return self.__class__(number)
+    def _create_instance(self, number: Union[int, float]) -> object:
+        if isinstance(number, int):
+            return self.__class__(number)
+        if isinstance(number, float):
+            return self.__class__(int(number))
+        else:
+            raise TypeError("Unsupported type for instance creation")
     
-    def _update_value(self, number: int) -> None:
-        self._number = number
+    def _update_value(self, number: Union[int, float]) -> None:
+        if isinstance(number, int):
+            self._number = number
+        elif isinstance(number, float):
+            self._number = int(number)
+        else:
+            raise TypeError("Unsupported type for value update")
 
     def __add__(self, other):
         if isinstance(other, BaseNumberVirtual):
@@ -210,14 +221,18 @@ class BaseNumberVirtual():
         return self
     
     def __neg__(self):
-        return -self._number
+        if self._number is None:
+            raise TypeError("Cannot negate None value")
+        return self._create_instance(-self._number)
     
     def __pos__(self):
-        return +self._number
+        if self._number is None:
+            raise TypeError("Cannot apply unary plus to None value")
+        return self._create_instance(+self._number)
 
 class GreekNumber(BaseNumberVirtual):
 
-    def set_number(self, number: int) -> None:
+    def set_number(self, number: Union[int, None]) -> None:
         self._number = number
         if not self._positional:
             self._convert_arabic_to_greek(number)
@@ -244,12 +259,13 @@ class GreekNumber(BaseNumberVirtual):
     def get_capital(self) -> bool:
         return self._capital
 
-    def __init__(self, number: int = None, value: str = None, positional: bool = False, capital: bool = False, debug: bool = False) -> None:
+    def __init__(self, number: Optional[int] = None, value: Optional[str] = None, positional: bool = False, capital: bool = False, debug: bool = False) -> None:
         self._capital = capital
         self._debug = debug
         self._positional = positional
         self._number = number
-        if number == None and value == None:
+        self._value = value
+        if number is None and value is None:
             raise ValueError("You must specify a number")
         if not value and not positional:
             self._convert_arabic_to_greek(number)
@@ -260,20 +276,39 @@ class GreekNumber(BaseNumberVirtual):
         elif value and positional:
             self._convert_position_greek_to_arabic(value)
 
-    def _create_instance(self, number: int) -> object:
-        return self.__class__(number, positional=self._positional, capital=self._capital)
+    def _create_instance(self, number: Union[int, float]) -> object:
+        if isinstance(number, int):
+            return self.__class__(number, positional=self._positional, capital=self._capital)
+        elif isinstance(number, float):
+            return self.__class__(int(number), positional=self._positional, capital=self._capital)
+        else:
+            raise TypeError("Unsupported type for instance creation")
 
     def __iter__(self):
+        if self._value is None:
+            raise TypeError("Value is None, cannot iterate")
         for item in self._value:
             yield item
 
     def __str__(self) -> str:
-        return f"{''.join(self._value)}"
+        if isinstance(self._value, str):
+            return f"{self._value}"
+        elif isinstance(self._value, list):
+            return f"{''.join(self._value)}"
+        else:
+            return "None"
 
     def __repr__(self) -> str:
-        return f"{''.join(self._value)}"
+        if isinstance(self._value, str):
+            return f"{self._value}"
+        elif isinstance(self._value, list):
+            return f"{''.join(self._value)}"
+        else:
+            return "None"
 
     def __len__(self) -> int:
+        if self._value is None:
+            raise TypeError("Value is None, length is undefined")
         return len(self._value)
 
     def get_str(self) -> str:
@@ -291,6 +326,8 @@ class GreekNumber(BaseNumberVirtual):
             if self._capital
             else GreekAlphabet.GREEK_ALPHABET_DICT
         )
+        if not isinstance(self._value, str) and not isinstance(self._value, list):
+            raise TypeError("Value must be a string or a list to convert to name")
         for item in self._value:
             if item in greek_alphabet:
                 result += greek_alphabet[item] + " "
@@ -298,7 +335,7 @@ class GreekNumber(BaseNumberVirtual):
                 raise ValueError(f"Invalid character {item}")
         return result.strip()
 
-    def _convert_arabic_to_greek(self, number: int) -> None:
+    def _convert_arabic_to_greek(self, number: Union[int, None]) -> None:
         if not (isinstance(number, int)):
             raise TypeError("The number must be an integer and be of type int")
         greek_numerals_list = (
@@ -333,7 +370,7 @@ class GreekNumber(BaseNumberVirtual):
                     continue
         self._value = ''.join(display_numerals)
 
-    def _convert_arabic_to_position_greek(self, number: int) -> str:
+    def _convert_arabic_to_position_greek(self, number: Union[int, None]) -> Union[str, None]:
         if not (isinstance(number, int)):
             raise TypeError("The number must be an integer and be of type int")
         greek_numerals_dict = (
@@ -367,7 +404,7 @@ class GreekNumber(BaseNumberVirtual):
             result += " "
         self._value = result.strip()
 
-    def _convert_greek_to_arabic(self, greek_numeral: str) -> int:
+    def _convert_greek_to_arabic(self, greek_numeral: str) -> Union[int, None]:
         number = 0
         if not (isinstance(greek_numeral, str)):
             raise TypeError("The number must be a string and be of type string")
@@ -399,7 +436,7 @@ class GreekNumber(BaseNumberVirtual):
         number += last_number
         self._number = number
     
-    def _convert_position_greek_to_arabic(self, greek_numeral: str) -> int:
+    def _convert_position_greek_to_arabic(self, greek_numeral: str) -> Union[int, None]:
         if not (isinstance(greek_numeral, str)):
             raise TypeError("The number must be a string and be of type string")
         number = 0
@@ -426,7 +463,9 @@ class GreekNumber(BaseNumberVirtual):
 class RomanNumber(BaseNumberVirtual):
 
     def get_value(self) -> str:
-        return ''.join(self._value)
+        if isinstance(self._value, list):
+            return ''.join(self._value)
+        return str(self._value)
 
     def __init__(self, number: int) -> None:
         if not number:
@@ -449,17 +488,33 @@ class RomanNumber(BaseNumberVirtual):
         self._value = display_numerals
 
     def __iter__(self):
+        if self._value is None:
+            raise TypeError("Value is None, cannot iterate")
         for item in self._value:
             yield item
 
     def __getitem__(self, item):
+        if self._value is None:
+            raise TypeError("Value is None, cannot index")
         return self._value[item]
 
     def __str__(self) -> str:
-        return f"{''.join(self._value)}"
+        if isinstance(self._value, str):
+            return f"{self._value}"
+        elif isinstance(self._value, list):
+            return f"{''.join(self._value)}"
+        else:
+            return "None"
 
     def __repr__(self) -> str:
-        return f"{''.join(self._value)}"
+        if isinstance(self._value, str):
+            return f"{self._value}"
+        elif isinstance(self._value, list):
+            return f"{''.join(self._value)}"
+        else:
+            return "None"
 
     def __len__(self) -> int:
+        if self._value is None:
+            raise TypeError("Value is None, length is undefined")
         return len(self._value)
