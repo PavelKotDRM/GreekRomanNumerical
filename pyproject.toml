@@ -4,10 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "GreekRomanUtils"
-version = "1.0.3"
+version = "1.0.4"
 description = "The module converts Arabic numerals to Greek and Roman numbers"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.11"
 license = {text = "Apache-2.0"}
 authors = [
     {name = "PKALab", email = "kpalab@pkotlyarov.ru"}
@@ -30,4 +30,6 @@ dev = [
     "jupyterlab>=3.6.8",
     "notebook>=6.5.7",
     "pytest>=7.4.4",
+    "ruff>=0.14.9",
+    "ty>=0.0.1a33",
 ]
