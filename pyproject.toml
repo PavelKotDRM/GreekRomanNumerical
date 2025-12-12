@@ -16,6 +16,9 @@ keywords = ["python", "greek", "roman"]
 classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "License :: OSI Approved :: Apache Software License",
 ]
 
@@ -30,6 +33,7 @@ dev = [
     "jupyterlab>=3.6.8",
     "notebook>=6.5.7",
     "pytest>=7.4.4",
+    "pytest-cov>=7.0.0",
     "ruff>=0.14.9",
     "ty>=0.0.1a33",
 ]
