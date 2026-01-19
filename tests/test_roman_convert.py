@@ -1,6 +1,6 @@
 """Тесты для класса RomanConvert"""
 import pytest
-from GreekRomanUtils.GreekRoman import RomanConvert
+from GreekRomanUtils.GreekRoman import RomanConvert, RomanNumber
 
 
 class TestRomanConvert:
@@ -138,14 +138,13 @@ class TestRomanConvert:
         """Тест туда-обратно конвертации"""
         converter = RomanConvert()
         for number in [1, 5, 10, 50, 100, 500, 1000, 1234, 1999, 2024]:
-            roman = converter.convert(number)
+            roman = converter.convert(number).get_value()
             back_to_arabic = converter.convert_to_arabic(roman)
             assert back_to_arabic == number
 
     def test_create_roman_number(self):
         """Тест создания римского числа"""
-        converter = RomanConvert()
-        roman_num = converter.create_roman_number(123)
+        roman_num = RomanNumber(123)
         assert roman_num.get_number() == 123
         assert str(roman_num) == "CXXIII"
 
@@ -164,7 +163,7 @@ class TestRomanConvert:
     def test_convert_zero(self):
         """Тест конвертации нуля (римляне не имели нуля)"""
         converter = RomanConvert()
-        result = converter.convert(0)
+        result = converter.convert(0).get_value()
         assert result == ""
 
     def test_convert_to_arabic_empty_string(self):

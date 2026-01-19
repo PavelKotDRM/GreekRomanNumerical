@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "GreekRomanUtils"
-version = "1.0.4"
+version = "1.0.5"
 description = "The module converts Arabic numerals to Greek and Roman numbers"
 readme = "README.md"
 requires-python = ">=3.11"

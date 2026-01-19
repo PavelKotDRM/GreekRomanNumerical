@@ -311,6 +311,16 @@ class GreekNumber(BaseNumberVirtual):
             raise TypeError("Value is None, length is undefined")
         return len(self._value)
 
+    def __eq__(self, other):
+        if isinstance(other, BaseNumberVirtual):
+            return self._number == other._number
+        elif isinstance(other, str):
+            return str(self._value) == other
+        elif isinstance(other, self._supported_type):
+            return self._number == other
+        else:
+            raise TypeError("Unsupported operand type")
+
     def get_str(self) -> str:
         """Converting a Unicode Greek number to a name
 
@@ -468,7 +478,7 @@ class RomanNumber(BaseNumberVirtual):
         return str(self._value)
 
     def __init__(self, number: int) -> None:
-        if not number:
+        if number is None:
             raise ValueError("You must specify a number")
         self._number = number
         self._convert_arabic_to_roman(number)
@@ -518,3 +528,13 @@ class RomanNumber(BaseNumberVirtual):
         if self._value is None:
             raise TypeError("Value is None, length is undefined")
         return len(self._value)
+
+    def __eq__(self, other):
+        if isinstance(other, BaseNumberVirtual):
+            return self._number == other._number
+        elif isinstance(other, str):
+            return self.get_value() == other
+        elif isinstance(other, self._supported_type):
+            return self._number == other
+        else:
+            raise TypeError("Unsupported operand type")

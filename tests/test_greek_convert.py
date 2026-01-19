@@ -1,4 +1,5 @@
 """Тесты для класса GreekConvert"""
+from GreekRomanUtils.DataType.GreekRomanType import GreekNumber
 import pytest
 from GreekRomanUtils.GreekRoman import GreekConvert
 
@@ -27,7 +28,6 @@ class TestGreekConvert:
         assert converter.convert(30) == "λ"
         assert converter.convert(50) == "ν"
         assert converter.convert(90) == "ϙ"
-
     def test_convert_hundreds(self):
         """Тест конвертации сотен"""
         converter = GreekConvert()
@@ -96,15 +96,15 @@ class TestGreekConvert:
 
     def test_convert_position(self):
         """Тест позиционной конвертации"""
-        converter = GreekConvert()
-        result = converter.convert_position(1000)
+        converter = GreekConvert(positional=True)
+        result = str(converter.convert(1000))
         assert "~" in result or len(result) > 1
 
     def test_convert_position_to_arabic(self):
         """Тест обратной позиционной конвертации"""
-        converter = GreekConvert()
-        numeral = converter.convert_position(1234)
-        result = converter.covert_to_position_arabic(numeral)
+        converter = GreekConvert(positional=True)
+        numeral = str(converter.convert_position(1234))
+        result = converter.convert_to_arabic(numeral)
         assert result == 1234
 
     def test_unicode_to_name(self):
@@ -133,14 +133,12 @@ class TestGreekConvert:
 
     def test_create_greek_number(self):
         """Тест создания греческого числа"""
-        converter = GreekConvert()
-        greek_num = converter.create_greek_number("ρκγ")
+        greek_num = GreekNumber(value="ρκγ")
         assert greek_num.get_number() == 123
 
     def test_create_greek_number_positional(self):
         """Тест создания позиционного греческого числа"""
-        converter = GreekConvert()
-        greek_num = converter.create_greek_number("α~σλδ", positional=True)
+        greek_num = GreekNumber(value="α~σλδ", positional=True)
         assert greek_num.get_number() == 1234
 
     def test_convert_to_arabic_invalid_symbol(self):

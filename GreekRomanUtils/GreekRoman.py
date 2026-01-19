@@ -11,44 +11,39 @@ class GreekConvert():
         """
         self._capital = capital
 
-    def create_greek_number(self, number: str, positional: bool=False) -> GreekNumber:
-        """Creating a Greek number
+    def change_positional(self, positional:bool):
+        """Changing the positional mode
 
         Args:
-            value (str): The value of the number
-            positional (bool, optional): Positional or not. Defaults to False.
-
-        Returns:
-            GreekNumber: The Greek number
+            positional (bool): Positional or not
         """
-        return GreekNumber(value=number, positional=positional, 
-                           capital=self._capital, debug=self._debug)
+        self._positional = positional
 
-    def convert(self, number: int) -> str:
+    def convert(self, number: int) -> GreekNumber:
         """Converting an Arabic number to a Greek one
 
         Args:
             number (int): The number to convert
 
         Returns:
-            str: The converted number
+            GreekNumber: The Greek number
         """
         greek_num = GreekNumber(number=number, positional=False, 
                                 capital=self._capital, debug=self._debug)
-        return str(greek_num)
+        return greek_num
         
-    def convert_position(self, number: int) -> str:
+    def convert_position(self, number: int) -> GreekNumber:
         """Converting an Arabic number to a positional Greek number
 
         Args:
             number (int): The number to convert
 
         Returns:
-            str: The converted number
+            GreekNumber: The positional Greek number
         """
         greek_num = GreekNumber(number=number, positional=True, 
                                 capital=self._capital, debug=self._debug)
-        return str(greek_num)
+        return greek_num
 
     def convert_to_arabic(self, numeral: str) -> int:
         """Converting a Greek or Roman number to an Arabic one
@@ -59,28 +54,13 @@ class GreekConvert():
         Returns:
             int: The converted number
         """
-        result = GreekNumber(value=numeral, positional=False, 
+        result = GreekNumber(value=numeral, positional=self._positional, 
                            capital=self._capital, debug=self._debug).get_number()
         if result is None:
             raise ValueError("Failed to convert Greek numeral to Arabic")
         return result
-    
-    def covert_to_position_arabic(self, numeral: str) -> int:
-        """Converting a positional Greek number to an Arabic one
 
-        Args:
-            numeral (str): The number to convert
-
-        Returns:
-            int: The converted number
-        """
-        result = GreekNumber(value=numeral, positional=True, 
-                           capital=self._capital, debug=self._debug).get_number()
-        if result is None:
-            raise ValueError("Failed to convert positional Greek numeral to Arabic")
-        return result
-
-    def __init__(self, capital:bool=False, debug:bool=False):
+    def __init__(self, capital:bool=False, debug:bool=False, positional:bool=False):
         """Initializing a class
 
         Args:
@@ -88,6 +68,7 @@ class GreekConvert():
         """
         self._debug = debug
         self._capital = capital
+        self._positional = positional
 
     def unicode_to_name(self, greek_numeral: str) -> str:
         """Convert Unicode Greek numeral to name
@@ -142,27 +123,15 @@ class GreekConvert():
 
 class RomanConvert():
     
-    def convert(self, arabic_number: int) -> str:
+    def convert(self, number: int) -> RomanNumber:
         """Convert Arabic number to Roman numeral
 
         Args:
-            arabic_number (int): Number to convert
-
+            number (int): Number to convert
         Returns:
-            str: Roman numeral representation
+            RomanNumber: Roman numeral representation
         """
-        return self._convert_arabic_to_roman(arabic_number)
-    
-    def create_roman_number(self, arabic_number: int) -> RomanNumber:
-        """Create a Roman numeral from an Arabic number
-
-        Args:
-            arabic_number (int): The number to convert
-
-        Returns:
-            RomanNumber: The Roman numeral representation
-        """
-        return RomanNumber(arabic_number)
+        return RomanNumber(number)
     
     def convert_to_arabic(self, roman_numeral: str) -> int:
         """Convert Roman numeral to Arabic number
