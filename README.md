@@ -2,7 +2,7 @@
 
 ## Module converting Arabic numerals to Greek and Roman numbers
 
-**Version:** 1.0.5  
+**Version:** 1.0.6  
 **Supported Python:** 3.11, 3.12, 3.13, 3.14, 3.15  
 **Repository:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
 **License:** Apache 2.0
@@ -66,7 +66,7 @@ There are proprietary data types `GreekNumber` and `RomanNumber` for working wit
 
 ## Модуль преобразование арабских цифр в греческие и римские числа
 
-**Версия:** 1.0.5  
+**Версия:** 1.0.6  
 **Поддерживаемые версии Python:** 3.11, 3.12, 3.13, 3.14, 3.15  
 **Репозиторий:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
 **Лицензия:** Apache 2.0
