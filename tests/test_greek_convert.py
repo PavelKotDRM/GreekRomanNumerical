@@ -103,7 +103,7 @@ class TestGreekConvert:
     def test_convert_position_to_arabic(self):
         """Тест обратной позиционной конвертации"""
         converter = GreekConvert(positional=True)
-        numeral = str(converter.convert_position(1234))
+        numeral = str(converter.convert(1234))
         result = converter.convert_to_arabic(numeral)
         assert result == 1234
 

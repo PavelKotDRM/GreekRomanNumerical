@@ -28,20 +28,7 @@ class GreekConvert():
         Returns:
             GreekNumber: The Greek number
         """
-        greek_num = GreekNumber(number=number, positional=False, 
-                                capital=self._capital, debug=self._debug)
-        return greek_num
-        
-    def convert_position(self, number: int) -> GreekNumber:
-        """Converting an Arabic number to a positional Greek number
-
-        Args:
-            number (int): The number to convert
-
-        Returns:
-            GreekNumber: The positional Greek number
-        """
-        greek_num = GreekNumber(number=number, positional=True, 
+        greek_num = GreekNumber(number=number, positional=self._positional, 
                                 capital=self._capital, debug=self._debug)
         return greek_num
 

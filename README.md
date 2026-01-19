@@ -2,7 +2,7 @@
 
 ## Module converting Arabic numerals to Greek and Roman numbers
 
-**Version:** 1.0.4  
+**Version:** 1.0.5  
 **Supported Python:** 3.11, 3.12, 3.13, 3.14, 3.15  
 **Repository:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
 **License:** Apache 2.0
@@ -30,34 +30,35 @@ There are proprietary data types `GreekNumber` and `RomanNumber` for working wit
 
 **For "GreekConvert":**
 
-- `change_capital`: A flag that controls the conversion of characters to upper or lower case.
-- `change_positional`: Change the positional mode for conversion.
-- `convert` — the function of converting an Arabic number to a Greek one, returns `GreekNumber` object, for example, the number `20005003001` is converted to `Κ___Ε__Γ_Α`.
-- `convert_position` is a function for converting an Arabic number to a positional Greek number, returns `GreekNumber` object, for example, the number `20005003001` is converted to `Κ~Ε~Γ~Α`.
-- `convert_to_arabic` is a function for converting a Greek number to an Arabic one.
-- `unicode_to_name` — the function converts a Unicode character into its name.
-- `name_to_unicode` is the reverse operation for unicode_to_name.
+- `change_capital` — A flag that controls the conversion of characters to upper or lower case.
+- `change_positional` — Change the positional mode for conversion.
+- `convert` — The function of converting an Arabic number to a Greek one, returns `GreekNumber` object. For example, the number `20005003001` is converted to `Κ___Ε__Γ_Α` (non-positional mode) or to `Κ~Ε~Γ~Α` (positional mode).
+- `convert_to_arabic` — A function for converting a Greek number to an Arabic one.
+- `unicode_to_name` — The function converts a Unicode character into its name.
+- `name_to_unicode` — The reverse operation for `unicode_to_name`.
 
 **The "GreekNumber" class:**
 
-- `set_number`: set a new value
-- `set_positional`: set the number output flag
-- `set_capital`: set the upper case flag
-- `get_number`: get the current number
-- `get_positional`: get the flag value
-- `get_capital`: get the flag value
-- And basic mathematical operations
+- `set_number` — Set a new value.
+- `set_positional` — Set the positional mode flag (affects display format: underscore `_` for non-positional, tilde `~` for positional).
+- `set_capital` — Set the upper case flag.
+- `get_number` — Get the current number.
+- `get_positional` — Get the positional flag value.
+- `get_capital` — Get the capital flag value.
+- `get_str` — Get the textual representation of the number (e.g., "alpha beta gamma").
+- And basic mathematical operations (+, -, *, /, //, %, **, ==, !=, <, <=, >, >=).
 
 **For "RomanConvert":**
 
-- `convert` — the method converts an Arabic number to a Roman number, returns `RomanNumber` object.
-- `convert_to_arabic` is the reverse method for `convert`.
+- `convert` — The method converts an Arabic number to a Roman number, returns `RomanNumber` object.
+- `convert_to_arabic` — The reverse method for `convert`.
 
 **For "RomanNumber":**
 
-- `set_number`: set a new value
-- `get_number`: get the current number
-- And basic mathematical operations
+- `set_number` — Set a new value.
+- `get_number` — Get the current number.
+- `get_value` — Get the string representation of the Roman numeral.
+- And basic mathematical operations (+, -, *, /, //, %, **, ==, !=, <, <=, >, >=).
 
 ----------------------
 
@@ -65,7 +66,7 @@ There are proprietary data types `GreekNumber` and `RomanNumber` for working wit
 
 ## Модуль преобразование арабских цифр в греческие и римские числа
 
-**Версия:** 1.0.4  
+**Версия:** 1.0.5  
 **Поддерживаемые версии Python:** 3.11, 3.12, 3.13, 3.14, 3.15  
 **Репозиторий:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
 **Лицензия:** Apache 2.0
@@ -93,34 +94,35 @@ pip install GreekRomanUtils
 
 **Для «GreekConvert»:**
 
-- `change_capital`: флаг, управляющий преобразованием символов в верхний или нижний регистр.
-- `change_positional`: изменить режим позиционного преобразования.
-- `convert` — функция преобразования арабского числа в греческое, возвращает объект `GreekNumber`, например, число `20005003001` преобразуется в `Κ___Ε__Γ_Α`.
-- `convert_position` — функция преобразования арабского числа в позиционное греческое число, возвращает объект `GreekNumber`, например, число `20005003001` преобразуется в `Κ~Ε~Γ~Α`.
-- `convert_to_arabic` — функция преобразования греческого числа в арабское.
-- `unicode_to_name` — функция преобразует символ Unicode в его название.
-- `name_to_unicode` — обратная операция для `unicode_to_name`.
+- `change_capital` — Флаг, управляющий преобразованием символов в верхний или нижний регистр.
+- `change_positional` — Изменить режим позиционного преобразования.
+- `convert` — Функция преобразования арабского числа в греческое, возвращает объект `GreekNumber`. Например, число `20005003001` преобразуется в `Κ___Ε__Γ_Α` (непозиционный режим) или в `Κ~Ε~Γ~Α` (позиционный режим).
+- `convert_to_arabic` — Функция преобразования греческого числа в арабское.
+- `unicode_to_name` — Функция преобразует символ Unicode в его название.
+- `name_to_unicode` — Обратная операция для `unicode_to_name`.
 
 **Класс «GreekNumber»:**
 
-- `set_number`: установить новое значение
-- `set_positional`: установить флаг вывода числа
-- `set_capital`: установить флаг верхнего регистра
-- `get_number`: получить текущее число
-- `get_positional`: получить значение флага
-- `get_capital`: получить значение флага
-- И базовые математические операции
+- `set_number` — Установить новое значение.
+- `set_positional` — Установить флаг позиционного режима (влияет на формат отображения: подчеркивание `_` для непозиционного, тильда `~` для позиционного).
+- `set_capital` — Установить флаг верхнего регистра.
+- `get_number` — Получить текущее число.
+- `get_positional` — Получить значение флага позиционности.
+- `get_capital` — Получить значение флага регистра.
+- `get_str` — Получить текстовое представление числа (например, "alpha beta gamma").
+- И базовые математические операции (+, -, *, /, //, %, **, ==, !=, <, <=, >, >=).
 
 **Для «RomanConvert»:**
 
-- `convert` — метод преобразует арабское число в римское, возвращает объект `RomanNumber`.
-- `convert_to_arabic` — обратный метод для `convert`.
+- `convert` — Метод преобразует арабское число в римское, возвращает объект `RomanNumber`.
+- `convert_to_arabic` — Обратный метод для `convert`.
 
 **Для «RomanNumber»:**
 
-- `set_number`: установить новое значение
-- `get_number`: получить текущее число
-- И базовые математические операции
+- `set_number` — Установить новое значение.
+- `get_number` — Получить текущее число.
+- `get_value` — Получить строковое представление римского числа.
+- И базовые математические операции (+, -, *, /, //, %, **, ==, !=, <, <=, >, >=).
 
 **Схема пректа**  
 ![ScheemProject](./Diagrams/Architecture.drawio.svg)
