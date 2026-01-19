@@ -87,9 +87,12 @@ jobs:
         # Генерируем changelog между текущим и предыдущим тегом
         if git describe --tags --abbrev=0 HEAD^ >/dev/null 2>&1; then
           PREV_TAG=$(git describe --tags --abbrev=0 HEAD^)
-          echo "changelog<<EOF" >> $GITHUB_OUTPUT
-          git log --pretty=format:"- %s (%h)" $PREV_TAG..HEAD >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          CHANGELOG=$(git log --pretty=format:"- %s (%h)" $PREV_TAG..HEAD)
+          {
+            echo "changelog<<EOF"
+            echo "$CHANGELOG"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
         else
           echo "changelog=First release" >> $GITHUB_OUTPUT
         fi
