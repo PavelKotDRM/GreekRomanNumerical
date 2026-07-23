@@ -44,3 +44,4 @@ manifest-path = "rust/Cargo.toml"
 module-name = "GreekRomanUtils._native"
 python-source = "."
 features = ["pyo3/extension-module"]
+include = ["LICENSE"]
