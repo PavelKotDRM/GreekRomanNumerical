@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
-          path: target/wheels/*.whl
+          path: rust/target/wheels/*.whl
 
   build-sdist:
     runs-on: ubuntu-latest
@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sdist
-          path: target/wheels/*.tar.gz
+          path: rust/target/wheels/*.tar.gz
 
   publish:
     needs: [build-wheels, build-sdist]
@@ -65,7 +65,8 @@ jobs:
       - name: Flatten artifacts
         shell: bash
         run: |
-          find dist -type f \( -name "*.whl" -o -name "*.tar.gz" \) -exec mv {} dist/ \;
+          mkdir -p dist
+          find dist -mindepth 2 -type f \( -name "*.whl" -o -name "*.tar.gz" \) -exec mv {} dist/ \;
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

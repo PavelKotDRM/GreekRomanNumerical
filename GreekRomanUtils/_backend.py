@@ -6,7 +6,8 @@ from . import _python_impl
 
 
 class BackendProtocol(Protocol):
-    name: str
+    @property
+    def name(self) -> str: ...
 
     def arabic_to_roman(self, number: int) -> str: ...
 
