@@ -1,6 +1,10 @@
 from ..DataStorage.Alphabet import GreekAlphabet, RomanNumberAlphabet
 from typing import Optional, Union
 
+
+_GREEK_NUMERAL_REVERSE = {v: k for k, v in GreekAlphabet.GREEK_NUMERAL_DICT.items()}
+_GREEK_NUMERAL_REVERSE_CAPITAL = {v: k for k, v in GreekAlphabet.GREEK_NUMERAL_DICT_CAPITAL.items()}
+
 class BaseNumberVirtual():
     _number: Union[int, None]
     _value: Union[str, list, None]
@@ -330,7 +334,7 @@ class GreekNumber(BaseNumberVirtual):
         Returns:
             str: The name of the Greek number
         """
-        result = ""
+        parts: list[str] = []
         greek_alphabet = (
             GreekAlphabet.GREEK_ALPHABET_DICT_CAPITAL
             if self._capital
@@ -340,10 +344,10 @@ class GreekNumber(BaseNumberVirtual):
             raise TypeError("Value must be a string or a list to convert to name")
         for item in self._value:
             if item in greek_alphabet:
-                result += greek_alphabet[item] + " "
+                parts.append(greek_alphabet[item])
             else:
                 raise ValueError(f"Invalid character {item}")
-        return result.strip()
+        return " ".join(parts)
 
     def _convert_arabic_to_greek(self, number: Union[int, None]) -> None:
         if not (isinstance(number, int)):
@@ -354,27 +358,23 @@ class GreekNumber(BaseNumberVirtual):
             else GreekAlphabet.GREEK_NUMERAL_LIST
         )
         display_numerals = []
-        hass_pow = False
-        power_value = 0
         input_num = number
         while input_num > 0:
+            digits = len(str(input_num))
+            power_value = (digits - 1) // 3 if digits > 3 else 0
+            value_multiplier = 1000 ** power_value if power_value else 1
             for numeral, _value in reversed(greek_numerals_list):
-                power_value = 0
-                if len(str(input_num)) > 3:
-                    power_value = ((len(str(input_num)) - 1)//3)
-                    _value *= 1000**power_value
-                    hass_pow = True
-                if input_num // _value > 0:
+                scaled_value = _value * value_multiplier
+                if input_num // scaled_value > 0:
                     if self._debug:
-                        print(f"Processing simpol:{numeral}, целое:{number // _value}, остаток:{number % _value}, число:{number}, \
-                              значение:{_value}, степень:{(len(str(number)) - 1)//3}")
-                    input_num = input_num % _value
+                        print(f"Processing simpol:{numeral}, целое:{number // scaled_value}, остаток:{number % scaled_value}, число:{number}, \
+                              значение:{scaled_value}, степень:{(len(str(number)) - 1)//3}")
+                    input_num = input_num % scaled_value
                     display_numerals.append(numeral)
                     if power_value:
                         for _ in range(power_value):
                             display_numerals.append("_")
-                    if hass_pow:
-                        hass_pow = False
+                    if power_value:
                         break
                 else:
                     continue
@@ -383,13 +383,8 @@ class GreekNumber(BaseNumberVirtual):
     def _convert_arabic_to_position_greek(self, number: Union[int, None]) -> Union[str, None]:
         if not (isinstance(number, int)):
             raise TypeError("The number must be an integer and be of type int")
-        greek_numerals_dict = (
-            GreekAlphabet.GREEK_NUMERAL_DICT_CAPITAL 
-            if self._capital 
-            else GreekAlphabet.GREEK_NUMERAL_DICT
-        )
-        reverse_dict = {v: k for k, v in greek_numerals_dict.items()}
-        result = ""
+        reverse_dict = _GREEK_NUMERAL_REVERSE_CAPITAL if self._capital else _GREEK_NUMERAL_REVERSE
+        groups: list[str] = []
         input_num = number
         derative_remains_list = []
         if self._debug:
@@ -400,19 +395,17 @@ class GreekNumber(BaseNumberVirtual):
             derative_remains_list.append(input_num % 1000)
             input_num = input_num // 1000
         for item in reversed(derative_remains_list):
+            group_chars: list[str] = []
             if self._debug:
-                print(f"result = {result}, i = {item}")
-            if len(result) > 0:
-                if result[-1] == " ":
-                    result = result.strip() + "~"
+                print(f"groups = {'~'.join(groups)}, i = {item}")
             for key, _value in reversed(reverse_dict.items()):
                 if item // key > 0:
-                    result += _value
+                    group_chars.append(_value)
                     item = item % key
                     if self._debug:
-                        print(f"result = {result}, i = {item} in for, key = {key}, _value = {_value}")
-            result += " "
-        self._value = result.strip()
+                        print(f"group = {''.join(group_chars)}, i = {item} in for, key = {key}, _value = {_value}")
+            groups.append(''.join(group_chars))
+        self._value = '~'.join(groups)
 
     def _convert_greek_to_arabic(self, greek_numeral: str) -> Union[int, None]:
         number = 0

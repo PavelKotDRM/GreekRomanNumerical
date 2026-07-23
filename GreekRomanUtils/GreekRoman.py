@@ -2,6 +2,10 @@ from .DataStorage.Alphabet import GreekAlphabet, RomanNumberAlphabet
 from .DataType.GreekRomanType import GreekNumber, RomanNumber
 from ._backend import get_backend
 
+
+_GREEK_NAME_TO_UNICODE = {v: k for k, v in GreekAlphabet.GREEK_ALPHABET_DICT.items()}
+_GREEK_NAME_TO_UNICODE_CAPITAL = {v: k for k, v in GreekAlphabet.GREEK_ALPHABET_DICT_CAPITAL.items()}
+
 class GreekConvert():
 
     def change_capital(self, capital:bool):
@@ -29,7 +33,7 @@ class GreekConvert():
         Returns:
             GreekNumber: The Greek number
         """
-        numeral = get_backend().arabic_to_greek(
+        numeral = self._backend.arabic_to_greek(
             number=number,
             positional=self._positional,
             capital=self._capital,
@@ -47,7 +51,7 @@ class GreekConvert():
         Returns:
             int: The converted number
         """
-        result = get_backend().greek_to_arabic(
+        result = self._backend.greek_to_arabic(
             numeral=numeral,
             positional=self._positional,
             capital=self._capital,
@@ -65,6 +69,7 @@ class GreekConvert():
         self._debug = debug
         self._capital = capital
         self._positional = positional
+        self._backend = get_backend()
 
     def unicode_to_name(self, greek_numeral: str) -> str:
         """Convert Unicode Greek numeral to name
@@ -78,7 +83,7 @@ class GreekConvert():
         Returns:
             str: Name of the Greek numeral
         """
-        result = ""
+        parts: list[str] = []
         greek_alphabet = (
             GreekAlphabet.GREEK_ALPHABET_DICT_CAPITAL
             if self._capital
@@ -86,10 +91,10 @@ class GreekConvert():
         )
         for char in greek_numeral:
             if char in greek_alphabet:
-                result += greek_alphabet[char] + " "
+                parts.append(greek_alphabet[char])
             else:
                 raise ValueError(f"Invalid symbol: {char}")
-        return result.strip()
+        return " ".join(parts)
 
     def name_to_unicode(self, name: str) -> str:
         """Convert name of Greek numeral to its Unicode representation
@@ -103,21 +108,20 @@ class GreekConvert():
         Returns:
             str: Unicode representation of Greek numeral
         """
-        greek_alphabet_dict = GreekAlphabet.GREEK_ALPHABET_DICT
-        greek_alphabet_dict_capital = GreekAlphabet.GREEK_ALPHABET_DICT_CAPITAL
-        reverse_dict = {v: k for k, v in greek_alphabet_dict.items()}
-        reverse_dict_capital = {v: k for k, v in greek_alphabet_dict_capital.items()}
-        result = ""
+        chars: list[str] = []
         for word in name.split():
-            if word in reverse_dict:
-                result += reverse_dict[word]
-            elif word in reverse_dict_capital:
-                result += reverse_dict_capital[word]
+            if word in _GREEK_NAME_TO_UNICODE:
+                chars.append(_GREEK_NAME_TO_UNICODE[word])
+            elif word in _GREEK_NAME_TO_UNICODE_CAPITAL:
+                chars.append(_GREEK_NAME_TO_UNICODE_CAPITAL[word])
             else:
                 raise ValueError(f"Invalid name: {word}")
-        return result
+        return "".join(chars)
 
 class RomanConvert():
+
+    def __init__(self):
+        self._backend = get_backend()
 
     @staticmethod
     def _chunk_roman_value(numeral: str) -> list[str]:
@@ -141,7 +145,7 @@ class RomanConvert():
             RomanNumber: Roman numeral representation
         """
         roman_number = RomanNumber(number)
-        numeral = get_backend().arabic_to_roman(number=number)
+        numeral = self._backend.arabic_to_roman(number=number)
         roman_number._value = self._chunk_roman_value(numeral)
         return roman_number
     
@@ -154,10 +158,10 @@ class RomanConvert():
         Returns:
             int: Arabic number representation
         """
-        return get_backend().roman_to_arabic(numeral=roman_numeral)
+        return self._backend.roman_to_arabic(numeral=roman_numeral)
     
     def _convert_arabic_to_roman(self, number: int) -> str:
-        return get_backend().arabic_to_roman(number=number)
+        return self._backend.arabic_to_roman(number=number)
 
     def _convert_roman_to_arabic(self, roman: str) -> int:
-        return get_backend().roman_to_arabic(numeral=roman)
+        return self._backend.roman_to_arabic(numeral=roman)
