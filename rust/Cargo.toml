@@ -4,6 +4,7 @@ version = "1.1.0"
 edition = "2024"
 description = "Native Rust backend for GreekRomanUtils conversions"
 license = "Apache-2.0"
+license-file = "LICENSE"
 repository = "https://github.com/PavelKotDRM/GreekRomanNumerical"
 homepage = "https://github.com/PavelKotDRM/GreekRomanNumerical"
 
