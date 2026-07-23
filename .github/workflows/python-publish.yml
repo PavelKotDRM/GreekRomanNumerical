@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Upload Python Package
+name: CI
 
 on:
   push:
@@ -15,9 +15,7 @@ on:
     branches: [ main ]
 
 permissions:
-  contents: write  # Для создания релизов
-  packages: write  # Для публикации в GitHub Packages
-  id-token: write  # Для trusted publishing в PyPI
+  contents: read
 
 jobs:
   test:
@@ -59,70 +57,3 @@ jobs:
     - name: Build package
       run: uv build
       
-  publish:
-    needs: test
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-    steps:
-    - uses: actions/checkout@v6
-      with:
-          fetch-depth: 0  # Получаем всю историю для changelog
-    
-    - name: Install uv
-      uses: astral-sh/setup-uv@v7
-      with:
-        version: "latest"
-
-    - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@stable
-    
-    - name: Set up Python
-      run: uv python install
-    
-    - name: Build package
-      run: uv build
-    
-    - name: Publish to TestPyPI (optional)
-      if: contains(github.ref, 'rc') || contains(github.ref, 'beta')
-      env:
-        UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_API_TOKEN }}
-      run: uv publish --publish-url https://test.pypi.org/legacy/
-    
-    - name: Publish to PyPI
-      if: "!contains(github.ref, 'rc') && !contains(github.ref, 'beta')"
-      env:
-        UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-      run: uv publish
-
-    - name: Generate changelog
-      id: changelog
-      run: |
-        # Генерируем changelog между текущим и предыдущим тегом
-        if git describe --tags --abbrev=0 HEAD^ >/dev/null 2>&1; then
-          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^)
-          CHANGELOG=$(git log --pretty=format:"- %s (%h)" $PREV_TAG..HEAD)
-          {
-            echo "changelog<<EOF"
-            echo "$CHANGELOG"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-        else
-          echo "changelog=First release" >> $GITHUB_OUTPUT
-        fi
-    
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
-      with:
-        files: |
-          dist/*.whl
-          dist/*.tar.gz
-        body: |
-          ## Changes
-          ${{ steps.changelog.outputs.changelog }}
-          
-          ## Installation
-          ```bash
-          pip install ${{ github.repository }}
-          ```
-        draft: false
-        prerelease: ${{ contains(github.ref, 'rc') || contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
