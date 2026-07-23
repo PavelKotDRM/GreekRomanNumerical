@@ -1,5 +1,6 @@
 from .DataStorage.Alphabet import GreekAlphabet, RomanNumberAlphabet
 from .DataType.GreekRomanType import GreekNumber, RomanNumber
+from ._backend import get_backend
 
 class GreekConvert():
 
@@ -28,7 +29,12 @@ class GreekConvert():
         Returns:
             GreekNumber: The Greek number
         """
-        greek_num = GreekNumber(number=number, positional=self._positional, 
+        numeral = get_backend().arabic_to_greek(
+            number=number,
+            positional=self._positional,
+            capital=self._capital,
+        )
+        greek_num = GreekNumber(value=numeral, positional=self._positional,
                                 capital=self._capital, debug=self._debug)
         return greek_num
 
@@ -41,8 +47,11 @@ class GreekConvert():
         Returns:
             int: The converted number
         """
-        result = GreekNumber(value=numeral, positional=self._positional, 
-                           capital=self._capital, debug=self._debug).get_number()
+        result = get_backend().greek_to_arabic(
+            numeral=numeral,
+            positional=self._positional,
+            capital=self._capital,
+        )
         if result is None:
             raise ValueError("Failed to convert Greek numeral to Arabic")
         return result
@@ -109,6 +118,19 @@ class GreekConvert():
         return result
 
 class RomanConvert():
+
+    @staticmethod
+    def _chunk_roman_value(numeral: str) -> list[str]:
+        chunks: list[str] = []
+        index = 0
+        for token, _ in RomanNumberAlphabet.ROMAN_NUMERAL_LIST:
+            count = 0
+            while numeral[index:index + len(token)] == token and token:
+                index += len(token)
+                count += 1
+            if count > 0:
+                chunks.append(token * count)
+        return chunks
     
     def convert(self, number: int) -> RomanNumber:
         """Convert Arabic number to Roman numeral
@@ -118,7 +140,10 @@ class RomanConvert():
         Returns:
             RomanNumber: Roman numeral representation
         """
-        return RomanNumber(number)
+        roman_number = RomanNumber(number)
+        numeral = get_backend().arabic_to_roman(number=number)
+        roman_number._value = self._chunk_roman_value(numeral)
+        return roman_number
     
     def convert_to_arabic(self, roman_numeral: str) -> int:
         """Convert Roman numeral to Arabic number
@@ -129,32 +154,10 @@ class RomanConvert():
         Returns:
             int: Arabic number representation
         """
-        return self._convert_roman_to_arabic(roman_numeral)
+        return get_backend().roman_to_arabic(numeral=roman_numeral)
     
     def _convert_arabic_to_roman(self, number: int) -> str:
-        if not (isinstance(number, int)):
-            raise TypeError("Число должно быть целым числом и иметь тип int")
-        display_numerals = []
-        input_num = number
-        for numeral, value in RomanNumberAlphabet.ROMAN_NUMERAL_LIST:
-            if input_num // value > 0:
-                count = input_num // value
-                input_num -= count * value
-                display_numerals.append(numeral * count)
-            else:
-                continue
-        return ''.join(display_numerals)
+        return get_backend().arabic_to_roman(number=number)
 
     def _convert_roman_to_arabic(self, roman: str) -> int:
-        number = 0
-        i = 0
-        while i < len(roman):
-            if i+1 < len(roman) and roman[i:i+2] in RomanNumberAlphabet.ROMAN_NUMERAL_DICT:
-                number += RomanNumberAlphabet.ROMAN_NUMERAL_DICT[roman[i:i+2]]
-                i += 2
-            elif roman[i] in RomanNumberAlphabet.ROMAN_NUMERAL_DICT:
-                number += RomanNumberAlphabet.ROMAN_NUMERAL_DICT[roman[i]]
-                i += 1
-            else:
-                raise ValueError(f"Invalid name: {roman}")
-        return number
+        return get_backend().roman_to_arabic(numeral=roman)

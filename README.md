@@ -2,7 +2,7 @@
 
 ## Module converting Arabic numerals to Greek and Roman numbers
 
-**Version:** 1.0.6  
+**Version:** 1.1.0  
 **Supported Python:** 3.11, 3.12, 3.13, 3.14, 3.15  
 **Repository:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
 **License:** Apache 2.0
@@ -19,6 +19,38 @@ Install the package using pip:
 
 ```bash
 pip install GreekRomanUtils
+```
+
+### Hybrid backend (Python + Rust)
+
+Starting from this migration stage, the public API stays unchanged while internal conversion logic can run on a Rust backend.
+
+- Default behavior: try Rust backend first, fallback to Python automatically.
+- Force Python backend:
+
+```bash
+GREEKROMAN_FORCE_PYTHON=1
+```
+
+### Development workflow with uv
+
+Install dependencies:
+
+```bash
+uv sync --dev
+```
+
+Run tests in Python-only mode:
+
+```bash
+GREEKROMAN_FORCE_PYTHON=1 uv run pytest -v
+```
+
+Build/install Rust extension in editable mode for hybrid testing:
+
+```bash
+uv run maturin develop --manifest-path rust/Cargo.toml
+uv run pytest -v
 ```
 
 ### The structure of the project
@@ -66,7 +98,7 @@ There are proprietary data types `GreekNumber` and `RomanNumber` for working wit
 
 ## Модуль преобразование арабских цифр в греческие и римские числа
 
-**Версия:** 1.0.6  
+**Версия:** 1.1.0  
 **Поддерживаемые версии Python:** 3.11, 3.12, 3.13, 3.14, 3.15  
 **Репозиторий:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
 **Лицензия:** Apache 2.0
@@ -83,6 +115,38 @@ There are proprietary data types `GreekNumber` and `RomanNumber` for working wit
 
 ```bash
 pip install GreekRomanUtils
+```
+
+### Гибридный backend (Python + Rust)
+
+На этапе миграции публичный API не меняется, но внутренняя логика конвертации может выполняться через Rust backend.
+
+- Поведение по умолчанию: сначала попытка Rust backend, при недоступности автоматический fallback на Python.
+- Принудительное отключение Rust backend:
+
+```bash
+GREEKROMAN_FORCE_PYTHON=1
+```
+
+### Локальный workflow через uv
+
+Установка зависимостей:
+
+```bash
+uv sync --dev
+```
+
+Запуск тестов в Python-only режиме:
+
+```bash
+GREEKROMAN_FORCE_PYTHON=1 uv run pytest -v
+```
+
+Сборка/подключение Rust-расширения для hybrid-режима:
+
+```bash
+uv run maturin develop --manifest-path rust/Cargo.toml
+uv run pytest -v
 ```
 
 ## Структура пректа

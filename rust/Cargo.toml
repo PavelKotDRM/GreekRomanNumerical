@@ -1,0 +1,15 @@
+[package]
+name = "greekromannumerical-native"
+version = "1.1.0"
+edition = "2024"
+description = "Native Rust backend for GreekRomanUtils conversions"
+license = "Apache-2.0"
+repository = "https://github.com/PavelKotDRM/GreekRomanNumerical"
+homepage = "https://github.com/PavelKotDRM/GreekRomanNumerical"
+
+[lib]
+name = "_native"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.29", features = ["extension-module", "abi3-py311"] }
