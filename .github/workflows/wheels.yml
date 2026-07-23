@@ -63,13 +63,9 @@ jobs:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
+          pattern: '*'
+          merge-multiple: true
           path: dist
-
-      - name: Flatten artifacts
-        shell: bash
-        run: |
-          mkdir -p dist
-          find dist -mindepth 2 -type f \( -name "*.whl" -o -name "*.tar.gz" \) -exec mv {} dist/ \;
 
       - name: Show prepared artifacts
         shell: bash
