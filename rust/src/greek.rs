@@ -309,6 +309,12 @@ pub fn arabic_to_greek(
 }
 
 fn arabic_to_greek_integer(number: BigInt, positional: bool, capital: bool) -> PyResult<String> {
+    if number < BigInt::from(0) {
+        return Ok(format!(
+            "-{}",
+            arabic_to_greek_integer(-number, positional, capital)?
+        ));
+    }
     if positional {
         return arabic_to_position_greek(number, capital);
     }

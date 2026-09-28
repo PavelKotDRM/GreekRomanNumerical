@@ -11,6 +11,20 @@ def test_roman_arabic_to_numeral_equivalence(number):
     assert rust_impl.arabic_to_roman(number) == _python_impl.arabic_to_roman(number)
 
 
+@pytest.mark.parametrize("number", [-1, -1234, -123456])
+@pytest.mark.parametrize("positional", [False, True])
+@pytest.mark.parametrize("capital", [False, True])
+def test_negative_integer_conversion_round_trips(number, positional, capital):
+    for backend in (_python_impl, rust_impl):
+        roman = backend.arabic_to_roman(number)
+        greek = backend.arabic_to_greek(number, positional, capital)
+
+        assert roman.startswith("-")
+        assert greek.startswith("-")
+        assert backend.roman_to_arabic(roman) == number
+        assert backend.greek_to_arabic(greek, positional, capital) == number
+
+
 @pytest.mark.parametrize("numeral", ["", "I", "IV", "MCMXCIX", "~C~X~XMMMCDLVI"])
 def test_roman_numeral_to_arabic_equivalence(numeral):
     assert rust_impl.roman_to_arabic(numeral) == _python_impl.roman_to_arabic(numeral)
@@ -147,6 +161,23 @@ def test_public_converters_roundtrip_float_values():
     assert str(classic_converter.convert(1.05)) == "α.(_:ε)"
     assert classic_converter.convert_to_arabic("α.(_:ε)") == 1.05
     assert classic_converter.convert_to_arabic("α.(0:ε)") == 1.05
+
+
+def test_public_converters_roundtrip_negative_integer():
+    number = -1234
+    roman_converter = RomanConvert()
+    roman_numeral = str(roman_converter.convert(number))
+
+    assert roman_numeral == "-MCCXXXIV"
+    assert roman_converter.convert_to_arabic(roman_numeral) == number
+
+    for positional in (False, True):
+        for capital in (False, True):
+            greek_converter = GreekConvert(positional=positional, capital=capital)
+            greek_numeral = str(greek_converter.convert(number))
+
+            assert greek_numeral.startswith("-")
+            assert greek_converter.convert_to_arabic(greek_numeral) == number
 
 
 @pytest.mark.parametrize(

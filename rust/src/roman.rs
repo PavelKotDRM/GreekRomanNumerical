@@ -72,7 +72,10 @@ pub fn arabic_to_roman(number: &Bound<'_, PyAny>) -> PyResult<String> {
 }
 
 fn arabic_to_roman_integer(number: BigInt) -> PyResult<String> {
-    if number <= BigInt::from(0) {
+    if number < BigInt::from(0) {
+        return Ok(format!("-{}", arabic_to_roman_integer(-number)?));
+    }
+    if number == BigInt::from(0) {
         return Ok(String::new());
     }
     let mut input = number;

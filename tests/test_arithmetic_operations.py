@@ -295,6 +295,17 @@ class TestGreekNumberArithmetic:
 
 class TestNumberEdgeCases:
     @pytest.mark.parametrize("number_type", [GreekNumber, RomanNumber])
+    @pytest.mark.parametrize("invalid", [float("nan"), float("inf"), float("-inf")])
+    def test_failed_set_number_preserves_existing_state(self, number_type, invalid):
+        number = number_type(7)
+        original_state = (number.get_number(), str(number))
+
+        with pytest.raises(ValueError):
+            number.set_number(invalid)
+
+        assert (number.get_number(), str(number)) == original_state
+
+    @pytest.mark.parametrize("number_type", [GreekNumber, RomanNumber])
     @pytest.mark.parametrize(
         ("dividend", "divisor", "expected"),
         [(7, 3, 2), (-7, 3, -2), (7, -3, -2), (-7, -3, 2)],

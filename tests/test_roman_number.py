@@ -66,6 +66,14 @@ class TestRomanNumber:
         assert str(RomanNumber(8)) == "VIII"
         assert str(RomanNumber(9)) == "IX"
 
+    @pytest.mark.parametrize("number, expected", [(-1, "-I"), (-1234, "-MCCXXXIV")])
+    def test_convert_negative_integers(self, number, expected):
+        roman = RomanNumber(number)
+
+        assert str(roman) == expected
+        assert roman.get_value() == expected
+        assert roman.get_number() == number
+
     def test_convert_tens(self):
         """Тест конвертации десятков"""
         assert str(RomanNumber(10)) == "X"

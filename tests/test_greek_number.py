@@ -108,6 +108,18 @@ class TestGreekNumber:
             greek = GreekNumber(number=i)
             assert greek.get_number() == i
 
+    @pytest.mark.parametrize("positional", [False, True])
+    @pytest.mark.parametrize("capital", [False, True])
+    @pytest.mark.parametrize("number", [-1, -1234])
+    def test_convert_negative_integers(self, number, positional, capital):
+        greek = GreekNumber(number=number, positional=positional, capital=capital)
+        parsed = GreekNumber(
+            value=str(greek), positional=positional, capital=capital
+        )
+
+        assert str(greek).startswith("-")
+        assert parsed.get_number() == number
+
     def test_convert_composite_numbers(self):
         """Тест конвертации составных чисел"""
         test_cases = [11, 15, 99, 123, 456, 789, 999]

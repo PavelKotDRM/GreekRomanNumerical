@@ -43,6 +43,21 @@ class BaseNumberVirtual:
             return
         raise TypeError("Unsupported type for value update")
 
+    def _set_number_atomically(
+        self,
+        number: float | None,
+        update_value: Callable[[], Any],
+    ) -> None:
+        previous_number = self._number
+        previous_value = self._value
+        self._number = number
+        try:
+            update_value()
+        except Exception:
+            self._number = previous_number
+            self._value = previous_value
+            raise
+
     def _get_operand(self, other: object) -> Any:
         if isinstance(other, BaseNumberVirtual):
             return other._number
@@ -159,11 +174,14 @@ class BaseNumberVirtual:
 class GreekNumber(BaseNumberVirtual):
 
     def set_number(self, number: float | None) -> None:
-        self._number = number
-        if not self._positional:
-            self._convert_arabic_to_greek(number)
-        else:
-            self._convert_arabic_to_position_greek(number)
+        self._set_number_atomically(
+            number,
+            lambda: (
+                self._convert_arabic_to_position_greek(number)
+                if self._positional
+                else self._convert_arabic_to_greek(number)
+            ),
+        )
     
     def set_positional(self, positional: bool) -> None:
         self._positional = positional
@@ -278,6 +296,9 @@ class GreekNumber(BaseNumberVirtual):
             return
         if not (isinstance(number, int)):
             raise TypeError("The number must be an integer and be of type int")
+        negative = number < 0
+        if negative:
+            number = -number
         greek_numerals_list = (
             GreekAlphabet.GREEK_NUMERAL_LIST_CAPITAL 
             if self._capital 
@@ -305,6 +326,8 @@ class GreekNumber(BaseNumberVirtual):
                 else:
                     continue
         self._value = ''.join(display_numerals)
+        if negative:
+            self._value = f"-{self._value}"
 
     def _convert_arabic_to_position_greek(self, number: float | None) -> str | None:
         if isinstance(number, float):
@@ -316,6 +339,9 @@ class GreekNumber(BaseNumberVirtual):
             return self._value
         if not (isinstance(number, int)):
             raise TypeError("The number must be an integer and be of type int")
+        negative = number < 0
+        if negative:
+            number = -number
         reverse_dict = _GREEK_NUMERAL_REVERSE_CAPITAL if self._capital else _GREEK_NUMERAL_REVERSE
         groups: list[str] = []
         input_num = number
@@ -339,6 +365,8 @@ class GreekNumber(BaseNumberVirtual):
                         print(f"group = {''.join(group_chars)}, i = {item} in for, key = {key}, _value = {_value}")
             groups.append(''.join(group_chars))
         self._value = '~'.join(groups)
+        if negative:
+            self._value = f"-{self._value}"
 
     def _convert_greek_to_arabic(self, greek_numeral: str) -> int | float | None:
         if "." in greek_numeral or greek_numeral.startswith("-"):
@@ -419,8 +447,10 @@ class RomanNumber(BaseNumberVirtual):
     def set_number(self, number: float | None) -> None:
         if not isinstance(number, (int, float)):
             raise TypeError("The number must be an integer or float")
-        self._number = number
-        self._convert_arabic_to_roman(number)
+        self._set_number_atomically(
+            number,
+            lambda: self._convert_arabic_to_roman(number),
+        )
 
     def get_value(self) -> str:
         if isinstance(self._value, list):
@@ -451,7 +481,8 @@ class RomanNumber(BaseNumberVirtual):
         if not (isinstance(number, int)):
             raise TypeError("The number must be an integer and be of type int")
         display_numerals = []
-        input_num = number
+        negative = number < 0
+        input_num = abs(number)
         for numeral, _value in RomanNumberAlphabet.ROMAN_NUMERAL_LIST:
             if input_num // _value > 0:
                 count = input_num // _value
@@ -459,6 +490,8 @@ class RomanNumber(BaseNumberVirtual):
                 display_numerals.append(numeral * count)
             else:
                 continue
+        if negative:
+            display_numerals.insert(0, "-")
         self._value = display_numerals
 
     def __iter__(self):
