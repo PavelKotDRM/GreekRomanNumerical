@@ -1,0 +1,4 @@
+[submodule "greekromannumerical-core"]
+	path = greekromannumerical-core
+	url = git@github.com:PavelKotDRM/greekromannumerical-core.git
+	branch = main

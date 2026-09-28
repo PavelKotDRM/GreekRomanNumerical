@@ -12,6 +12,8 @@ name = "_native"
 crate-type = ["cdylib"]
 
 [dependencies]
+greekromannumerical-core = { path = "../greekromannumerical-core" }
+# PyO3's num-bigint conversion support uses 0.4; the core library uses 0.5.
+core-bigint = { package = "num-bigint", version = "0.5" }
 pyo3 = { version = "0.29", features = ["extension-module", "abi3-py311", "num-bigint"] }
 num-bigint = "0.5"
-num-traits = "0.2"

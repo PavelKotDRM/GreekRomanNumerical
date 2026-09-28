@@ -24,6 +24,9 @@ jobs:
         python-version: ["3.11", "3.12", "3.13", "3.14", "3.15.0rc2"]
     steps:
     - uses: actions/checkout@v7
+      with:
+        submodules: recursive
+        token: ${{ secrets.CORE_SUBMODULE_TOKEN || github.token }}
 
     - name: Install Rust toolchain
       uses: dtolnay/rust-toolchain@stable

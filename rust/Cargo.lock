@@ -9,11 +9,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
 
 [[package]]
-name = "greekromannumerical-native"
-version = "1.1.1"
+name = "greekromannumerical-core"
+version = "0.1.0"
 dependencies = [
  "num-bigint 0.5.1",
  "num-traits",
+]
+
+[[package]]
+name = "greekromannumerical-native"
+version = "1.1.1"
+dependencies = [
+ "greekromannumerical-core",
+ "num-bigint 0.4.8",
+ "num-bigint 0.5.1",
  "pyo3",
 ]
 

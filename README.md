@@ -38,11 +38,21 @@ Starting from this migration stage, the public API stays unchanged while interna
 GREEKROMAN_FORCE_PYTHON=1
 ```
 
-The Rust bridge preserves Python's arbitrary-precision integers. Output size remains limited by available memory.
+The Rust bridge preserves Python's arbitrary-precision integers. The core library applies configured input, output, and Greek-group limits to bound resource use.
 
 ### Development environment and quality checks
 
 Requirements: Python 3.11 or newer, `uv`, and [rustup](https://rustup.rs). Windows builds also require the MSVC C++ Build Tools.
+
+The Rust core is included as the [`greekromannumerical-core`](./greekromannumerical-core) Git submodule. Clone this repository with submodules, or initialize them in an existing checkout:
+
+```bash
+git clone --recurse-submodules git@github.com:PavelKotDRM/GreekRomanNumerical.git
+# Existing checkout:
+git submodule update --init --recursive
+```
+
+The core repository is accessed over SSH. GitHub Actions also needs a `CORE_SUBMODULE_TOKEN` repository secret: a read-only token with `Contents: read` access to both this repository and the core repository.
 
 Create the environment and install the project with its Rust extension:
 
@@ -187,11 +197,21 @@ pip install GreekRomanUtils
 GREEKROMAN_FORCE_PYTHON=1
 ```
 
-Rust-мост сохраняет произвольную точность целых Python. Размер строкового результата ограничен доступной памятью.
+Rust-мост сохраняет произвольную точность целых Python. Core-библиотека ограничивает размер входа и результата, а также число греческих разрядов, чтобы контролировать расход ресурсов.
 
 ### Настройка среды и проверки качества
 
 Требования: Python 3.11 или новее, `uv` и [rustup](https://rustup.rs). Для сборки в Windows также нужны MSVC C++ Build Tools.
+
+Rust core подключён как Git submodule [`greekromannumerical-core`](./greekromannumerical-core). Клонируйте репозиторий вместе с submodule или инициализируйте его в уже существующей копии:
+
+```powershell
+git clone --recurse-submodules git@github.com:PavelKotDRM/GreekRomanNumerical.git
+# Для уже клонированного репозитория:
+git submodule update --init --recursive
+```
+
+Core-репозиторий доступен по SSH. Для GitHub Actions также задайте секрет репозитория `CORE_SUBMODULE_TOKEN`: токен только для чтения с правом `Contents: read` для обоих репозиториев.
 
 Создание окружения и установка проекта вместе с Rust-расширением:
 
