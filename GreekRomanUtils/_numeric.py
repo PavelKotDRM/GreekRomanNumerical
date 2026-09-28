@@ -13,12 +13,16 @@ def split_float(number: float) -> tuple[int, str, bool]:
     return whole, fraction, number < 0
 
 
-def format_float_numeral(number: float, convert_integer: Callable[[int], str]) -> str:
+def format_float_numeral(
+    number: float,
+    convert_integer: Callable[[int], str],
+    zero_token: str = "0",
+) -> str:
     whole, fraction, negative = split_float(number)
     numeral = convert_integer(whole)
     if fraction:
         encoded_digits = ":".join(
-            "0" if digit == "0" else convert_integer(int(digit))
+            zero_token if digit == "0" else convert_integer(int(digit))
             for digit in fraction
         )
         numeral = f"{numeral}.({encoded_digits})"
@@ -30,6 +34,7 @@ def format_float_numeral(number: float, convert_integer: Callable[[int], str]) -
 def parse_decimal_numeral(
     numeral: str,
     convert_integer: Callable[[str], int],
+    zero_token: str = "0",
 ) -> int | float:
     negative = numeral.startswith("-")
     if negative:
@@ -52,7 +57,7 @@ def parse_decimal_numeral(
 
     fraction_digits = []
     for token in fraction_tokens:
-        if token == "0":
+        if token == zero_token or token == "0":
             fraction_digits.append("0")
             continue
         digit = convert_integer(token)

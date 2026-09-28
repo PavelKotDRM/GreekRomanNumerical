@@ -274,7 +274,7 @@ class GreekNumber(BaseNumberVirtual):
                 self._convert_arabic_to_greek(integer)
                 return self._value if isinstance(self._value, str) else ""
 
-            self._value = format_float_numeral(number, convert_integer)
+            self._value = format_float_numeral(number, convert_integer, zero_token="_")
             return
         if not (isinstance(number, int)):
             raise TypeError("The number must be an integer and be of type int")
@@ -312,7 +312,7 @@ class GreekNumber(BaseNumberVirtual):
                 self._convert_arabic_to_position_greek(integer)
                 return self._value if isinstance(self._value, str) else ""
 
-            self._value = format_float_numeral(number, convert_integer)
+            self._value = format_float_numeral(number, convert_integer, zero_token="~")
             return self._value
         if not (isinstance(number, int)):
             raise TypeError("The number must be an integer and be of type int")
@@ -348,7 +348,7 @@ class GreekNumber(BaseNumberVirtual):
                     raise TypeError("Expected an integer Greek numeral")
                 return self._number
 
-            self._number = parse_decimal_numeral(greek_numeral, convert_integer)
+            self._number = parse_decimal_numeral(greek_numeral, convert_integer, zero_token="_")
             return self._number
         number = 0
         if not (isinstance(greek_numeral, str)):
@@ -389,7 +389,7 @@ class GreekNumber(BaseNumberVirtual):
                     raise TypeError("Expected an integer Greek numeral")
                 return self._number
 
-            self._number = parse_decimal_numeral(greek_numeral, convert_integer)
+            self._number = parse_decimal_numeral(greek_numeral, convert_integer, zero_token="~")
             return self._number
         if not (isinstance(greek_numeral, str)):
             raise TypeError("The number must be a string and be of type string")
@@ -443,7 +443,7 @@ class RomanNumber(BaseNumberVirtual):
                 self._value.insert(0, "-")
             if fraction:
                 encoded_digits = ":".join(
-                    "0" if digit == "0" else RomanNumber(int(digit)).get_value()
+                    "_" if digit == "0" else RomanNumber(int(digit)).get_value()
                     for digit in fraction
                 )
                 self._value.extend([".(", encoded_digits, ")"])

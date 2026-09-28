@@ -1,7 +1,7 @@
 //! Greek numeral conversion in classic and positional forms.
 //!
 //! Fractional digits are converted independently using the selected case and Greek format.
-//! For example, `1.25` in lowercase classic form is `α.(β:ε)`.
+//! Zero digits use `_` in classic mode and `~` in positional mode.
 
 use crate::common::{
     ArabicInput, decimal_float_value, decode_fractional_digits, encode_fractional_digits,
@@ -292,7 +292,8 @@ pub fn arabic_to_greek(
         } => {
             let mut numeral = arabic_to_greek_integer(whole, positional, capital)?;
             if !fraction.is_empty() {
-                let encoded = encode_fractional_digits(&fraction, |digit| {
+                let zero_token = if positional { "~" } else { "_" };
+                let encoded = encode_fractional_digits(&fraction, zero_token, |digit| {
                     arabic_to_greek_integer(BigInt::from(digit), positional, capital)
                 })?;
                 numeral.push_str(".(");
@@ -390,7 +391,7 @@ fn arabic_to_position_greek(number: BigInt, capital: bool) -> PyResult<String> {
 /// # Python example
 ///
 /// ```python
-/// >>> greek_to_arabic('α.(0:ε)', positional=False, capital=False)
+/// >>> greek_to_arabic('α.(_:ε)', positional=False, capital=False)
 /// 1.05
 /// ```
 #[pyfunction]
@@ -406,7 +407,8 @@ pub fn greek_to_arabic<'py>(
     };
     if let Some((integer_numeral, fraction)) = fractional_numeral_parts(numeral)? {
         let whole = greek_to_arabic_integer(integer_numeral, positional, capital)?;
-        let fraction_digits = decode_fractional_digits(fraction, |digit| {
+        let zero_token = if positional { "~" } else { "_" };
+        let fraction_digits = decode_fractional_digits(fraction, zero_token, |digit| {
             greek_to_arabic_integer(digit, positional, capital)
         })?;
         let value = decimal_float_value(&whole, &fraction_digits, negative)?;
@@ -495,26 +497,26 @@ mod tests {
 
     #[test]
     fn fractional_digit_tokens_preserve_zeroes_and_case() {
-        let lowercase = encode_fractional_digits("105", |digit| {
+        let lowercase = encode_fractional_digits("105", "_", |digit| {
             arabic_to_greek_integer(BigInt::from(digit), false, false)
         })
         .unwrap();
-        assert_eq!(lowercase, "α:0:ε");
+        assert_eq!(lowercase, "α:_:ε");
         assert_eq!(
-            decode_fractional_digits(&lowercase, |digit| {
+            decode_fractional_digits(&lowercase, "_", |digit| {
                 greek_to_arabic_integer(digit, false, false)
             })
             .unwrap(),
             "105"
         );
 
-        let uppercase = encode_fractional_digits("105", |digit| {
+        let uppercase = encode_fractional_digits("105", "~", |digit| {
             arabic_to_greek_integer(BigInt::from(digit), true, true)
         })
         .unwrap();
-        assert_eq!(uppercase, "Α:0:Ε");
+        assert_eq!(uppercase, "Α:~:Ε");
         assert_eq!(
-            decode_fractional_digits(&uppercase, |digit| {
+            decode_fractional_digits(&uppercase, "~", |digit| {
                 greek_to_arabic_integer(digit, true, true)
             })
             .unwrap(),

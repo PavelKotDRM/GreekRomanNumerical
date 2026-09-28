@@ -1,8 +1,9 @@
 //! Native conversion backend for Greek and Roman numerals.
 //!
 //! The Python extension exposes arbitrary-precision integer conversions and finite `f64`
-//! conversions. Fractional digits are encoded as numeral tokens separated by `:`; `0` marks
-//! a zero digit. For example, `1.25` is written as `I.(II:V)` or `α.(β:ε)`.
+//! conversions. Fractional digits are encoded as numeral tokens separated by `:`. Roman and
+//! classic Greek zero digits use `_`; positional Greek zero digits use `~`. For example,
+//! `1.05` is written as `I.(_:V)`, `α.(_:ε)`, or `α.(~:ε)`.
 //!
 //! Conversion implementations are organized by responsibility in [`greek`] and [`roman`].
 

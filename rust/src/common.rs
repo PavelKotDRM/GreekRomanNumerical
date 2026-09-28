@@ -61,6 +61,7 @@ pub(crate) fn float_decimal_parts(value: &str) -> PyResult<(BigInt, String, bool
             .ok_or_else(|| PyValueError::new_err("Invalid float representation"))?
     };
     let fraction = fraction_digits.trim_end_matches('0').to_owned();
+    let negative = negative && (whole != BigInt::from(0) || !fraction.is_empty());
     Ok((whole, fraction, negative))
 }
 
@@ -85,7 +86,11 @@ pub(crate) fn extract_arabic_input(number: &Bound<'_, PyAny>) -> PyResult<Arabic
         .map_err(|_| PyTypeError::new_err("number must be an integer or float"))
 }
 
-pub(crate) fn encode_fractional_digits<F>(fraction: &str, mut convert_digit: F) -> PyResult<String>
+pub(crate) fn encode_fractional_digits<F>(
+    fraction: &str,
+    zero_token: &str,
+    mut convert_digit: F,
+) -> PyResult<String>
 where
     F: FnMut(u32) -> PyResult<String>,
 {
@@ -98,7 +103,7 @@ where
             .to_digit(10)
             .ok_or_else(|| PyValueError::new_err("Invalid decimal digit"))?;
         if value == 0 {
-            encoded.push('0');
+            encoded.push_str(zero_token);
         } else {
             encoded.push_str(&convert_digit(value)?);
         }
@@ -133,13 +138,17 @@ pub(crate) fn fractional_numeral_parts(numeral: &str) -> PyResult<Option<(&str, 
     Ok(Some((integer_numeral, fraction)))
 }
 
-pub(crate) fn decode_fractional_digits<F>(fraction: &str, mut convert_digit: F) -> PyResult<String>
+pub(crate) fn decode_fractional_digits<F>(
+    fraction: &str,
+    zero_token: &str,
+    mut convert_digit: F,
+) -> PyResult<String>
 where
     F: FnMut(&str) -> PyResult<BigInt>,
 {
     let mut digits = String::new();
     for token in fraction.split(':') {
-        if token == "0" {
+        if token == zero_token || token == "0" {
             digits.push('0');
             continue;
         }
@@ -190,14 +199,18 @@ mod tests {
             float_decimal_parts("2.0").unwrap(),
             (BigInt::from(2), String::new(), false)
         );
+        assert_eq!(
+            float_decimal_parts("-0.0").unwrap(),
+            (BigInt::from(0), String::new(), false)
+        );
     }
 
     #[test]
     fn fractional_tokens_round_trip_with_zero_placeholders() {
-        let encoded = encode_fractional_digits("105", |digit| Ok(digit.to_string())).unwrap();
+        let encoded = encode_fractional_digits("105", "0", |digit| Ok(digit.to_string())).unwrap();
         assert_eq!(encoded, "1:0:5");
 
-        let decoded = decode_fractional_digits(&encoded, |token| {
+        let decoded = decode_fractional_digits(&encoded, "0", |token| {
             token
                 .parse::<u32>()
                 .map(BigInt::from)
@@ -205,6 +218,20 @@ mod tests {
         })
         .unwrap();
         assert_eq!(decoded, "105");
+
+        let greek_encoded =
+            encode_fractional_digits("105", "_", |digit| Ok(digit.to_string())).unwrap();
+        assert_eq!(greek_encoded, "1:_:5");
+        assert_eq!(
+            decode_fractional_digits(&greek_encoded, "_", |token| {
+                token
+                    .parse::<u32>()
+                    .map(BigInt::from)
+                    .map_err(|_| PyValueError::new_err("invalid test digit"))
+            })
+            .unwrap(),
+            "105"
+        );
     }
 
     #[test]

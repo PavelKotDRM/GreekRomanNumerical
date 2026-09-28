@@ -16,6 +16,12 @@ def test_roman_numeral_to_arabic_equivalence(numeral):
     assert rust_impl.roman_to_arabic(numeral) == _python_impl.roman_to_arabic(numeral)
 
 
+@pytest.mark.parametrize("backend", [_python_impl, rust_impl], ids=["python", "rust"])
+@pytest.mark.parametrize("numeral", ["I.(0:V)", "I.(_:V)"])
+def test_roman_fractional_zero_markers_are_accepted(backend, numeral):
+    assert backend.roman_to_arabic(numeral) == 1.05
+
+
 @pytest.mark.parametrize(
     "number",
     [0.5, 1.05, 1.25, -1.25, 2.0, 1e-7, -1e-7, 0.30000000000000004],
@@ -26,6 +32,20 @@ def test_roman_float_conversion_equivalence(number):
     assert rust_impl.arabic_to_roman(number) == numeral
     assert _python_impl.roman_to_arabic(numeral) == number
     assert rust_impl.roman_to_arabic(numeral) == number
+
+
+@pytest.mark.parametrize("number", [0.0, -0.0])
+@pytest.mark.parametrize("positional", [False, True])
+@pytest.mark.parametrize("capital", [False, True])
+def test_float_zero_uses_empty_integer_numeral(number, positional, capital):
+    for backend in (_python_impl, rust_impl):
+        assert backend.arabic_to_roman(number) == ""
+        assert backend.arabic_to_greek(number, positional=positional, capital=capital) == ""
+        assert backend.roman_to_arabic("") == 0
+        assert backend.greek_to_arabic("", positional=positional, capital=capital) == 0
+
+    assert str(RomanConvert().convert(number)) == ""
+    assert str(GreekConvert(positional=positional, capital=capital).convert(number)) == ""
 
 
 @pytest.mark.parametrize(
@@ -72,6 +92,20 @@ def test_greek_numeral_to_arabic_equivalence(numeral, positional, capital):
     )
 
 
+@pytest.mark.parametrize("backend", [_python_impl, rust_impl], ids=["python", "rust"])
+@pytest.mark.parametrize(
+    "numeral,positional,capital",
+    [
+        ("α.(0:ε)", False, False),
+        ("α.(_:ε)", False, False),
+        ("α.(0:ε)", True, False),
+        ("α.(~:ε)", True, False),
+    ],
+)
+def test_greek_fractional_zero_markers_are_accepted(backend, numeral, positional, capital):
+    assert backend.greek_to_arabic(numeral, positional, capital) == 1.05
+
+
 @pytest.mark.parametrize(
     "number",
     [0.5, 1.05, 1.25, -1.25, 2.0, 1e-7, -1e-7, 0.30000000000000004],
@@ -98,15 +132,21 @@ def test_non_finite_float_values_are_rejected(backend, number):
 def test_public_converters_roundtrip_float_values():
     roman_converter = RomanConvert()
     roman_number = roman_converter.convert(1.05)
-    assert str(roman_number) == "I.(0:V)"
+    assert str(roman_number) == "I.(_:V)"
     assert roman_number.get_number() == 1.05
+    assert roman_converter.convert_to_arabic("I.(_:V)") == 1.05
     assert roman_converter.convert_to_arabic("I.(0:V)") == 1.05
 
     greek_converter = GreekConvert(positional=True, capital=True)
     greek_number = greek_converter.convert(1.05)
-    assert str(greek_number) == "Α.(0:Ε)"
+    assert str(greek_number) == "Α.(~:Ε)"
     assert isinstance(GreekConvert().convert(2.0).get_number(), float)
-    assert greek_converter.convert_to_arabic("Α.(0:Ε)") == 1.05
+    assert greek_converter.convert_to_arabic("Α.(~:Ε)") == 1.05
+
+    classic_converter = GreekConvert()
+    assert str(classic_converter.convert(1.05)) == "α.(_:ε)"
+    assert classic_converter.convert_to_arabic("α.(_:ε)") == 1.05
+    assert classic_converter.convert_to_arabic("α.(0:ε)") == 1.05
 
 
 @pytest.mark.parametrize(

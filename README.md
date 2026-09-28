@@ -13,7 +13,7 @@ The library converts Arabic numbers, such as `1234`, to Roman equivalents, such 
 
 This module can also output Greek numbers in different formats. For example, the number `20005003001` can be represented as `Κ___Ε__Γ_Α` or `Κ~Ε~Γ~Α`. In addition, it is possible to output the text name of the digits, for example, `Kappa macron Epsilon macron Gamma macron Alpha`, or output them in lowercase.  
 
-Finite float fractions are encoded digit by digit, with digit tokens separated by colons. For example, `1.25` becomes `I.(II:V)` or `α.(β:ε)`; zero digits use `0` to preserve decimal places.
+Finite float fractions are encoded digit by digit, with numeral tokens separated by colons. For example, `1.25` becomes `I.(II:V)` or `α.(β:ε)`. A zero digit is written as `_` for Roman numerals and classic Greek, or `~` for positional Greek; thus `1.05` becomes `I.(_:V)`, `α.(_:ε)`, or `α.(~:ε)`.
 
 ### Installation
 
@@ -90,7 +90,7 @@ cargo test --locked --manifest-path rust/Cargo.toml
 uv build
 ```
 
-Rust behavior is currently covered by the Python backend-equivalence tests; the Rust crate has no standalone unit tests yet.
+Rust behavior is covered by native unit tests and Python backend-equivalence tests.
 
 Run the opt-in performance benchmarks (the Rust extension must be built):
 
@@ -158,7 +158,7 @@ There are proprietary data types `GreekNumber` and `RomanNumber` for working wit
 
 Также этот модуль может выводить греческие цифры в разных форматах. Например, число `20005003001` можно представить как `Κ___Ε__Γ_Α` или `Κ~Ε~Γ~Α`. Кроме того, есть возможность выводить текстовое название цифр, например, `Kappa macron Epsilon macron Gamma macron Alpha`, или выводить их в нижнем регистре.
 
-Дробная часть конечного `float` кодируется по цифрам, разделённым двоеточиями. Например, `1.25` преобразуется в `I.(II:V)` или `α.(β:ε)`; нулевой разряд обозначается `0`, чтобы сохранить точность.
+Дробная часть конечного `float` кодируется по цифрам, разделённым двоеточиями. Например, `1.25` преобразуется в `I.(II:V)` или `α.(β:ε)`. Нулевой разряд записывается как `_` для римского и классического греческого форматов, или `~` для позиционного греческого; поэтому `1.05` выглядит как `I.(_:V)`, `α.(_:ε)` или `α.(~:ε)`.
 
 ### Установка
 
@@ -229,7 +229,7 @@ cargo test --locked --manifest-path rust/Cargo.toml
 uv build
 ```
 
-Поведение Rust backend покрывается Python-тестами эквивалентности; отдельных Rust unit-тестов пока нет.
+Поведение Rust backend покрывается собственными unit-тестами и Python-тестами эквивалентности backend-ов.
 
 Запуск opt-in тестов производительности (Rust-расширение должно быть собрано):
 

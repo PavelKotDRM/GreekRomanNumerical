@@ -485,19 +485,22 @@ class TestMixedArithmetic:
         assert (GreekNumber(10) / 3).get_number() == 3
 
     @pytest.mark.parametrize(
-        ("number", "expected_roman", "expected_greek"),
+        ("number", "expected_roman", "expected_greek_classic", "expected_greek_positional"),
         [
-            (1.25, "I.(II:V)", "α.(β:ε)"),
-            (1.05, "I.(0:V)", "α.(0:ε)"),
-            (0.5, ".(V)", ".(ε)"),
+            (1.25, "I.(II:V)", "α.(β:ε)", "α.(β:ε)"),
+            (1.05, "I.(_:V)", "α.(_:ε)", "α.(~:ε)"),
+            (0.5, ".(V)", ".(ε)", ".(ε)"),
         ],
     )
     def test_float_fraction_is_encoded_digit_by_digit(
         self,
         number,
         expected_roman,
-        expected_greek,
+        expected_greek_classic,
+        expected_greek_positional,
     ):
         assert str(RomanNumber(number)) == expected_roman
-        assert str(GreekNumber(number)) == expected_greek
-        assert GreekNumber(value=expected_greek).get_number() == number
+        assert str(GreekNumber(number)) == expected_greek_classic
+        assert GreekNumber(value=expected_greek_classic).get_number() == number
+        assert str(GreekNumber(number, positional=True)) == expected_greek_positional
+        assert GreekNumber(value=expected_greek_positional, positional=True).get_number() == number

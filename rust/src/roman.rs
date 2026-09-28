@@ -1,7 +1,7 @@
 //! Roman numeral conversion, including the package's extended and decimal forms.
 //!
 //! Fractional decimal digits are encoded independently and separated by `:`. A zero digit is
-//! written as `0`, preserving its place. For example, `1.05` is represented as `I.(0:V)`.
+//! written as `_`, preserving its place. For example, `1.05` is represented as `I.(_:V)`.
 
 use crate::common::{
     ArabicInput, decimal_float_value, decode_fractional_digits, encode_fractional_digits,
@@ -56,7 +56,7 @@ pub fn arabic_to_roman(number: &Bound<'_, PyAny>) -> PyResult<String> {
         } => {
             let mut numeral = arabic_to_roman_integer(whole)?;
             if !fraction.is_empty() {
-                let encoded = encode_fractional_digits(&fraction, |digit| {
+                let encoded = encode_fractional_digits(&fraction, "_", |digit| {
                     arabic_to_roman_integer(BigInt::from(digit))
                 })?;
                 numeral.push_str(".(");
@@ -100,12 +100,12 @@ fn arabic_to_roman_integer(number: BigInt) -> PyResult<String> {
 
 /// Converts an extended Roman numeral back to an Arabic integer or float.
 ///
-/// This accepts fractional forms produced by [`arabic_to_roman`], such as `I.(0:V)`.
+/// This accepts fractional forms produced by [`arabic_to_roman`], such as `I.(_:V)`.
 ///
 /// # Python example
 ///
 /// ```python
-/// >>> roman_to_arabic('I.(0:V)')
+/// >>> roman_to_arabic('I.(_:V)')
 /// 1.05
 /// ```
 #[pyfunction]
@@ -116,7 +116,7 @@ pub fn roman_to_arabic<'py>(py: Python<'py>, numeral: &str) -> PyResult<Bound<'p
     };
     if let Some((integer_numeral, fraction)) = fractional_numeral_parts(numeral)? {
         let whole = roman_to_arabic_integer(integer_numeral)?;
-        let fraction_digits = decode_fractional_digits(fraction, roman_to_arabic_integer)?;
+        let fraction_digits = decode_fractional_digits(fraction, "_", roman_to_arabic_integer)?;
         let value = decimal_float_value(&whole, &fraction_digits, negative)?;
         return Ok(PyFloat::new(py, value).into_any());
     }
@@ -212,19 +212,24 @@ mod tests {
 
     #[test]
     fn fractional_digit_tokens_preserve_zeroes() {
-        let encoded =
-            encode_fractional_digits("105", |digit| arabic_to_roman_integer(BigInt::from(digit)))
-                .unwrap();
-        assert_eq!(encoded, "I:0:V");
+        let encoded = encode_fractional_digits("105", "_", |digit| {
+            arabic_to_roman_integer(BigInt::from(digit))
+        })
+        .unwrap();
+        assert_eq!(encoded, "I:_:V");
         assert_eq!(
-            decode_fractional_digits(&encoded, roman_to_arabic_integer).unwrap(),
+            decode_fractional_digits(&encoded, "_", roman_to_arabic_integer).unwrap(),
             "105"
+        );
+        assert_eq!(
+            decode_fractional_digits("0:V", "_", roman_to_arabic_integer).unwrap(),
+            "05"
         );
     }
 
     #[test]
     fn rejects_invalid_roman_tokens() {
         assert!(roman_to_arabic_integer("ABC").is_err());
-        assert!(decode_fractional_digits("X", roman_to_arabic_integer).is_err());
+        assert!(decode_fractional_digits("X", "_", roman_to_arabic_integer).is_err());
     }
 }
