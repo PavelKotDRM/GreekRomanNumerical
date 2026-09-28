@@ -12,7 +12,7 @@ checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
 name = "greekromannumerical-core"
 version = "0.1.0"
 dependencies = [
- "num-bigint 0.5.1",
+ "num-bigint",
  "num-traits",
 ]
 
@@ -21,8 +21,7 @@ name = "greekromannumerical-native"
 version = "1.1.1"
 dependencies = [
  "greekromannumerical-core",
- "num-bigint 0.4.8",
- "num-bigint 0.5.1",
+ "num-bigint",
  "pyo3",
 ]
 
@@ -37,16 +36,6 @@ name = "libc"
 version = "0.2.189"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
-
-[[package]]
-name = "num-bigint"
-version = "0.4.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c89e69e7e0f03bea5ef08013795c25018e101932225a656383bd384495ecc367"
-dependencies = [
- "num-integer",
- "num-traits",
-]
 
 [[package]]
 name = "num-bigint"
@@ -104,8 +93,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4688ddedf473e32662b9b067670129a8afb8c18e351482c70d62ba4a88171e8b"
 dependencies = [
  "libc",
- "num-bigint 0.4.8",
- "num-traits",
  "once_cell",
  "portable-atomic",
  "pyo3-build-config",

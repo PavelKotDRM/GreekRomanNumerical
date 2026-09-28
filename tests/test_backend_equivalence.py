@@ -89,6 +89,21 @@ def test_large_greek_number_equivalence(positional, capital):
     assert rust_impl.greek_to_arabic(numeral, positional, capital) == number
 
 
+def test_arbitrary_precision_integer_conversion_exceeds_python_decimal_limit():
+    magnitude = 1 << 16000
+    for number in (magnitude, -magnitude):
+        numeral = rust_impl.arabic_to_greek(number, positional=True, capital=False)
+        assert rust_impl.greek_to_arabic(numeral, positional=True, capital=False) == number
+
+
+def test_integer_conversion_accepts_index_protocol():
+    class Indexable:
+        def __index__(self):
+            return 44
+
+    assert rust_impl.arabic_to_roman(Indexable()) == "XLIV"
+
+
 @pytest.mark.parametrize(
     "numeral,positional,capital",
     [
