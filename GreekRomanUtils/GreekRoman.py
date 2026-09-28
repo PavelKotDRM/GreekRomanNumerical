@@ -23,11 +23,11 @@ class GreekConvert:
         """
         self._positional = positional
 
-    def convert(self, number: int) -> GreekNumber:
+    def convert(self, number: float) -> GreekNumber:
         """Converting an Arabic number to a Greek one
 
         Args:
-            number (int): The number to convert
+            number (float): The number to convert
 
         Returns:
             GreekNumber: The Greek number
@@ -39,16 +39,18 @@ class GreekConvert:
         )
         greek_num = GreekNumber(value=numeral, positional=self._positional,
                                 capital=self._capital, debug=self._debug)
+        if isinstance(number, float):
+            greek_num.set_number(number)
         return greek_num
 
-    def convert_to_arabic(self, numeral: str) -> int:
+    def convert_to_arabic(self, numeral: str) -> int | float:
         """Converting a Greek or Roman number to an Arabic one
 
         Args:
             numeral (str): The number to convert
 
         Returns:
-            int: The converted number
+            int | float: The converted number
         """
         result = self._backend.greek_to_arabic(
             numeral=numeral,
@@ -125,21 +127,27 @@ class RomanConvert:
     @staticmethod
     def _chunk_roman_value(numeral: str) -> list[str]:
         chunks: list[str] = []
+        if numeral.startswith("-"):
+            chunks.append("-")
+            numeral = numeral[1:]
+        integer_numeral, separator, fraction = numeral.partition(".")
         index = 0
         for token, _ in RomanNumberAlphabet.ROMAN_NUMERAL_LIST:
             count = 0
-            while numeral[index:index + len(token)] == token and token:
+            while integer_numeral[index:index + len(token)] == token and token:
                 index += len(token)
                 count += 1
             if count > 0:
                 chunks.append(token * count)
+        if separator:
+            chunks.extend([separator, fraction])
         return chunks
     
-    def convert(self, number: int) -> RomanNumber:
+    def convert(self, number: float) -> RomanNumber:
         """Convert Arabic number to Roman numeral
 
         Args:
-            number (int): Number to convert
+            number (float): Number to convert
         Returns:
             RomanNumber: Roman numeral representation
         """
@@ -148,19 +156,19 @@ class RomanConvert:
         roman_number._value = self._chunk_roman_value(numeral)
         return roman_number
     
-    def convert_to_arabic(self, roman_numeral: str) -> int:
+    def convert_to_arabic(self, roman_numeral: str) -> int | float:
         """Convert Roman numeral to Arabic number
 
         Args:
             roman_numeral (str): Roman numeral to convert
 
         Returns:
-            int: Arabic number representation
+            int | float: Arabic number representation
         """
         return self._backend.roman_to_arabic(numeral=roman_numeral)
     
-    def _convert_arabic_to_roman(self, number: int) -> str:
+    def _convert_arabic_to_roman(self, number: float) -> str:
         return self._backend.arabic_to_roman(number=number)
 
-    def _convert_roman_to_arabic(self, roman: str) -> int:
+    def _convert_roman_to_arabic(self, roman: str) -> int | float:
         return self._backend.roman_to_arabic(numeral=roman)

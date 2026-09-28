@@ -4,26 +4,27 @@ import operator
 from collections.abc import Callable
 from typing import Any, Self
 
+from .._numeric import format_float_numeral, parse_decimal_numeral, split_float
 from ..DataStorage.Alphabet import GreekAlphabet, RomanNumberAlphabet
 
 _GREEK_NUMERAL_REVERSE = {v: k for k, v in GreekAlphabet.GREEK_NUMERAL_DICT.items()}
 _GREEK_NUMERAL_REVERSE_CAPITAL = {v: k for k, v in GreekAlphabet.GREEK_NUMERAL_DICT_CAPITAL.items()}
 
 class BaseNumberVirtual:
-    _number: int | None
+    _number: int | float | None
     _value: str | list | None
     _positional: bool
     _capital: bool
     _debug: bool
-    _supported_type = (int,)
+    _supported_type = (int, float)
 
-    def get_number(self) -> int | None:
+    def get_number(self) -> int | float | None:
         return self._number
     
-    def set_number(self, number: int | None) -> None:
+    def set_number(self, number: float | None) -> None:
         self._number = number
 
-    def __init__(self, number: int | None = None, value: str | None = None, positional: bool = False, capital: bool = False, debug: bool = False) -> None:
+    def __init__(self, number: float | None = None, value: str | None = None, positional: bool = False, capital: bool = False, debug: bool = False) -> None:
         raise NotImplementedError("This is an abstract class")
         self._number = number
         self._value = number
@@ -32,20 +33,15 @@ class BaseNumberVirtual:
         self._debug = debug
 
     def _create_instance(self, number: float) -> object:
-        if isinstance(number, int):
+        if isinstance(number, (int, float)):
             return self.__class__(number)
-        if isinstance(number, float):
-            return self.__class__(int(number))
-        else:
-            raise TypeError("Unsupported type for instance creation")
+        raise TypeError("Unsupported type for instance creation")
     
     def _update_value(self, number: float) -> None:
-        if isinstance(number, int):
+        if isinstance(number, (int, float)):
             self.set_number(number)
-        elif isinstance(number, float):
-            self.set_number(int(number))
-        else:
-            raise TypeError("Unsupported type for value update")
+            return
+        raise TypeError("Unsupported type for value update")
 
     def _get_operand(self, other: object) -> Any:
         if isinstance(other, BaseNumberVirtual):
@@ -84,6 +80,12 @@ class BaseNumberVirtual:
         quotient = abs(dividend) // abs(divisor)
         return -quotient if (dividend < 0) != (divisor < 0) else quotient
 
+    @classmethod
+    def _division(cls, dividend: float, divisor: float) -> int | float:
+        if isinstance(dividend, int) and isinstance(divisor, int):
+            return cls._truncating_division(dividend, divisor)
+        return operator.truediv(dividend, divisor)
+
     def __add__(self, other: object) -> object:
         return self._apply_binary_operation(other, operator.add)
 
@@ -94,7 +96,7 @@ class BaseNumberVirtual:
         return self._apply_binary_operation(other, operator.mul)
 
     def __truediv__(self, other: object) -> object:
-        return self._apply_binary_operation(other, self._truncating_division)
+        return self._apply_binary_operation(other, self._division)
 
     def __floordiv__(self, other: object) -> object:
         return self._apply_binary_operation(other, operator.floordiv)
@@ -133,7 +135,7 @@ class BaseNumberVirtual:
         return self._apply_inplace_operation(other, operator.mul)
 
     def __itruediv__(self, other: object) -> Self:
-        return self._apply_inplace_operation(other, self._truncating_division)
+        return self._apply_inplace_operation(other, self._division)
 
     def __ifloordiv__(self, other: object) -> Self:
         return self._apply_inplace_operation(other, operator.floordiv)
@@ -156,7 +158,7 @@ class BaseNumberVirtual:
 
 class GreekNumber(BaseNumberVirtual):
 
-    def set_number(self, number: int | None) -> None:
+    def set_number(self, number: float | None) -> None:
         self._number = number
         if not self._positional:
             self._convert_arabic_to_greek(number)
@@ -183,7 +185,7 @@ class GreekNumber(BaseNumberVirtual):
     def get_capital(self) -> bool:
         return self._capital
 
-    def __init__(self, number: int | None = None, value: str | None = None, positional: bool = False, capital: bool = False, debug: bool = False) -> None:
+    def __init__(self, number: float | None = None, value: str | None = None, positional: bool = False, capital: bool = False, debug: bool = False) -> None:
         self._capital = capital
         self._debug = debug
         self._positional = positional
@@ -202,12 +204,9 @@ class GreekNumber(BaseNumberVirtual):
             self._convert_greek_to_arabic(value)
 
     def _create_instance(self, number: float) -> object:
-        if isinstance(number, int):
+        if isinstance(number, (int, float)):
             return self.__class__(number, positional=self._positional, capital=self._capital)
-        elif isinstance(number, float):
-            return self.__class__(int(number), positional=self._positional, capital=self._capital)
-        else:
-            raise TypeError("Unsupported type for instance creation")
+        raise TypeError("Unsupported type for instance creation")
 
     def __iter__(self):
         if self._value is None:
@@ -269,7 +268,14 @@ class GreekNumber(BaseNumberVirtual):
                 raise ValueError(f"Invalid character {item}")
         return " ".join(parts)
 
-    def _convert_arabic_to_greek(self, number: int | None) -> None:
+    def _convert_arabic_to_greek(self, number: float | None) -> None:
+        if isinstance(number, float):
+            def convert_integer(integer: int) -> str:
+                self._convert_arabic_to_greek(integer)
+                return self._value if isinstance(self._value, str) else ""
+
+            self._value = format_float_numeral(number, convert_integer)
+            return
         if not (isinstance(number, int)):
             raise TypeError("The number must be an integer and be of type int")
         greek_numerals_list = (
@@ -300,7 +306,14 @@ class GreekNumber(BaseNumberVirtual):
                     continue
         self._value = ''.join(display_numerals)
 
-    def _convert_arabic_to_position_greek(self, number: int | None) -> str | None:
+    def _convert_arabic_to_position_greek(self, number: float | None) -> str | None:
+        if isinstance(number, float):
+            def convert_integer(integer: int) -> str:
+                self._convert_arabic_to_position_greek(integer)
+                return self._value if isinstance(self._value, str) else ""
+
+            self._value = format_float_numeral(number, convert_integer)
+            return self._value
         if not (isinstance(number, int)):
             raise TypeError("The number must be an integer and be of type int")
         reverse_dict = _GREEK_NUMERAL_REVERSE_CAPITAL if self._capital else _GREEK_NUMERAL_REVERSE
@@ -327,7 +340,16 @@ class GreekNumber(BaseNumberVirtual):
             groups.append(''.join(group_chars))
         self._value = '~'.join(groups)
 
-    def _convert_greek_to_arabic(self, greek_numeral: str) -> int | None:
+    def _convert_greek_to_arabic(self, greek_numeral: str) -> int | float | None:
+        if "." in greek_numeral or greek_numeral.startswith("-"):
+            def convert_integer(integer_numeral: str) -> int:
+                self._convert_greek_to_arabic(integer_numeral)
+                if not isinstance(self._number, int):
+                    raise TypeError("Expected an integer Greek numeral")
+                return self._number
+
+            self._number = parse_decimal_numeral(greek_numeral, convert_integer)
+            return self._number
         number = 0
         if not (isinstance(greek_numeral, str)):
             raise TypeError("The number must be a string and be of type string")
@@ -359,7 +381,16 @@ class GreekNumber(BaseNumberVirtual):
         number += last_number
         self._number = number
     
-    def _convert_position_greek_to_arabic(self, greek_numeral: str) -> int | None:
+    def _convert_position_greek_to_arabic(self, greek_numeral: str) -> int | float | None:
+        if "." in greek_numeral or greek_numeral.startswith("-"):
+            def convert_integer(integer_numeral: str) -> int:
+                self._convert_position_greek_to_arabic(integer_numeral)
+                if not isinstance(self._number, int):
+                    raise TypeError("Expected an integer Greek numeral")
+                return self._number
+
+            self._number = parse_decimal_numeral(greek_numeral, convert_integer)
+            return self._number
         if not (isinstance(greek_numeral, str)):
             raise TypeError("The number must be a string and be of type string")
         number = 0
@@ -385,9 +416,9 @@ class GreekNumber(BaseNumberVirtual):
 
 class RomanNumber(BaseNumberVirtual):
 
-    def set_number(self, number: int | None) -> None:
-        if not isinstance(number, int):
-            raise TypeError("The number must be an integer and be of type int")
+    def set_number(self, number: float | None) -> None:
+        if not isinstance(number, (int, float)):
+            raise TypeError("The number must be an integer or float")
         self._number = number
         self._convert_arabic_to_roman(number)
 
@@ -396,13 +427,23 @@ class RomanNumber(BaseNumberVirtual):
             return ''.join(self._value)
         return str(self._value)
 
-    def __init__(self, number: int) -> None:
+    def __init__(self, number: float) -> None:
         if number is None:
             raise ValueError("You must specify a number")
         self._number = number
         self._convert_arabic_to_roman(number)
 
-    def _convert_arabic_to_roman(self, number: int) -> None:
+    def _convert_arabic_to_roman(self, number: float) -> None:
+        if isinstance(number, float):
+            whole, fraction, negative = split_float(number)
+            self._convert_arabic_to_roman(whole)
+            if not isinstance(self._value, list):
+                raise TypeError("Roman numeral chunks are unavailable")
+            if negative:
+                self._value.insert(0, "-")
+            if fraction:
+                self._value.extend([".", fraction])
+            return
         if not (isinstance(number, int)):
             raise TypeError("The number must be an integer and be of type int")
         display_numerals = []

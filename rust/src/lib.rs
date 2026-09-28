@@ -1,7 +1,8 @@
 use num_bigint::BigInt;
 use num_traits::ToPrimitive;
-use pyo3::exceptions::{PyMemoryError, PyOverflowError, PyValueError};
+use pyo3::exceptions::{PyMemoryError, PyOverflowError, PyTypeError, PyValueError};
 use pyo3::prelude::*;
+use pyo3::types::PyFloat;
 
 #[derive(Clone, Copy)]
 struct GreekPair {
@@ -326,9 +327,137 @@ fn thousand_pow(power: usize) -> PyResult<BigInt> {
     Ok(BigInt::from(1000).pow(power))
 }
 
+enum ArabicInput {
+    Integer(BigInt),
+    Float {
+        whole: BigInt,
+        fraction: String,
+        negative: bool,
+    },
+}
+
+/// Expands Python's shortest float representation into decimal integer and fractional parts.
+fn float_decimal_parts(value: &str) -> PyResult<(BigInt, String, bool)> {
+    let (negative, value) = match value.strip_prefix('-') {
+        Some(value) => (true, value),
+        None => (false, value),
+    };
+    let (mantissa, exponent) = match value.find(['e', 'E']) {
+        Some(index) => {
+            let exponent = value[index + 1..]
+                .parse::<i64>()
+                .map_err(|_| PyValueError::new_err("Invalid float representation"))?;
+            (&value[..index], exponent)
+        }
+        None => (value, 0),
+    };
+    let decimal_index = mantissa.find('.').unwrap_or(mantissa.len());
+    let mut digits = mantissa.replace('.', "");
+    if digits.is_empty() || !digits.bytes().all(|digit| digit.is_ascii_digit()) {
+        return Err(PyValueError::new_err("Invalid float representation"));
+    }
+
+    let decimal_index = decimal_index as i64 + exponent;
+    let (whole_digits, fraction_digits) = if decimal_index <= 0 {
+        let leading_zeroes = usize::try_from(-decimal_index)
+            .map_err(|_| PyOverflowError::new_err("Float representation is too large"))?;
+        (
+            "0".to_owned(),
+            format!("{}{}", "0".repeat(leading_zeroes), digits),
+        )
+    } else if decimal_index as usize >= digits.len() {
+        let trailing_zeroes = decimal_index as usize - digits.len();
+        digits.push_str(&"0".repeat(trailing_zeroes));
+        (digits, String::new())
+    } else {
+        let fraction = digits.split_off(decimal_index as usize);
+        (digits, fraction)
+    };
+
+    let whole_digits = whole_digits.trim_start_matches('0');
+    let whole = if whole_digits.is_empty() {
+        BigInt::from(0)
+    } else {
+        BigInt::parse_bytes(whole_digits.as_bytes(), 10)
+            .ok_or_else(|| PyValueError::new_err("Invalid float representation"))?
+    };
+    let fraction = fraction_digits.trim_end_matches('0').to_owned();
+    Ok((whole, fraction, negative))
+}
+
+fn extract_arabic_input(number: &Bound<'_, PyAny>) -> PyResult<ArabicInput> {
+    if number.is_instance_of::<PyFloat>() {
+        let value = number.extract::<f64>()?;
+        if !value.is_finite() {
+            return Err(PyValueError::new_err("Float values must be finite"));
+        }
+        let representation = number.str()?;
+        let (whole, fraction, negative) = float_decimal_parts(representation.to_str()?)?;
+        return Ok(ArabicInput::Float {
+            whole,
+            fraction,
+            negative,
+        });
+    }
+
+    number
+        .extract::<BigInt>()
+        .map(ArabicInput::Integer)
+        .map_err(|_| PyTypeError::new_err("number must be an integer or float"))
+}
+
+fn fractional_numeral_parts(numeral: &str) -> PyResult<Option<(&str, &str)>> {
+    let Some(index) = numeral.find('.') else {
+        return Ok(None);
+    };
+    let integer_numeral = &numeral[..index];
+    let fraction = &numeral[index + 1..];
+    if fraction.is_empty() || !fraction.bytes().all(|digit| digit.is_ascii_digit()) {
+        return Err(PyValueError::new_err(format!(
+            "Invalid decimal numeral: {numeral}"
+        )));
+    }
+    Ok(Some((integer_numeral, fraction)))
+}
+
+fn decimal_float_value(integer: &BigInt, fraction: &str, negative: bool) -> PyResult<f64> {
+    let value = format!("{integer}.{fraction}")
+        .parse::<f64>()
+        .map_err(|_| {
+            PyValueError::new_err("Decimal numeral is outside the supported float range")
+        })?;
+    if !value.is_finite() {
+        return Err(PyValueError::new_err(
+            "Decimal numeral is outside the supported float range",
+        ));
+    }
+    Ok(if negative { -value } else { value })
+}
+
 #[pyfunction]
-/// Converts Arabic integer to Roman numeral representation.
-fn arabic_to_roman(number: BigInt) -> PyResult<String> {
+/// Converts an Arabic integer or float to Roman numeral representation.
+fn arabic_to_roman(number: &Bound<'_, PyAny>) -> PyResult<String> {
+    match extract_arabic_input(number)? {
+        ArabicInput::Integer(number) => arabic_to_roman_integer(number),
+        ArabicInput::Float {
+            whole,
+            fraction,
+            negative,
+        } => {
+            let mut numeral = arabic_to_roman_integer(whole)?;
+            if !fraction.is_empty() {
+                numeral.push('.');
+                numeral.push_str(&fraction);
+            }
+            if negative {
+                numeral.insert(0, '-');
+            }
+            Ok(numeral)
+        }
+    }
+}
+
+fn arabic_to_roman_integer(number: BigInt) -> PyResult<String> {
     if number <= BigInt::from(0) {
         return Ok(String::new());
     }
@@ -356,8 +485,26 @@ fn arabic_to_roman(number: BigInt) -> PyResult<String> {
 }
 
 #[pyfunction]
-/// Converts Roman numeral representation back to Arabic integer.
-fn roman_to_arabic(numeral: &str) -> PyResult<BigInt> {
+/// Converts Roman numeral representation back to an Arabic integer or float.
+fn roman_to_arabic<'py>(py: Python<'py>, numeral: &str) -> PyResult<Bound<'py, PyAny>> {
+    let (negative, numeral) = match numeral.strip_prefix('-') {
+        Some(numeral) => (true, numeral),
+        None => (false, numeral),
+    };
+    if let Some((integer_numeral, fraction)) = fractional_numeral_parts(numeral)? {
+        let whole = roman_to_arabic_integer(integer_numeral)?;
+        let value = decimal_float_value(&whole, fraction, negative)?;
+        return Ok(PyFloat::new(py, value).into_any());
+    }
+
+    let mut total = roman_to_arabic_integer(numeral)?;
+    if negative {
+        total = -total;
+    }
+    Ok(total.into_pyobject(py)?.into_any())
+}
+
+fn roman_to_arabic_integer(numeral: &str) -> PyResult<BigInt> {
     let bytes = numeral.as_bytes();
     let mut index = 0usize;
     let mut total = BigInt::from(0);
@@ -374,8 +521,29 @@ fn roman_to_arabic(numeral: &str) -> PyResult<BigInt> {
 }
 
 #[pyfunction]
-/// Converts Arabic integer to Greek numeral in classic or positional form.
-fn arabic_to_greek(number: BigInt, positional: bool, capital: bool) -> PyResult<String> {
+/// Converts an Arabic integer or float to Greek numeral in classic or positional form.
+fn arabic_to_greek(number: &Bound<'_, PyAny>, positional: bool, capital: bool) -> PyResult<String> {
+    match extract_arabic_input(number)? {
+        ArabicInput::Integer(number) => arabic_to_greek_integer(number, positional, capital),
+        ArabicInput::Float {
+            whole,
+            fraction,
+            negative,
+        } => {
+            let mut numeral = arabic_to_greek_integer(whole, positional, capital)?;
+            if !fraction.is_empty() {
+                numeral.push('.');
+                numeral.push_str(&fraction);
+            }
+            if negative {
+                numeral.insert(0, '-');
+            }
+            Ok(numeral)
+        }
+    }
+}
+
+fn arabic_to_greek_integer(number: BigInt, positional: bool, capital: bool) -> PyResult<String> {
     if positional {
         return arabic_to_position_greek(number, capital);
     }
@@ -454,8 +622,31 @@ fn arabic_to_position_greek(number: BigInt, capital: bool) -> PyResult<String> {
 }
 
 #[pyfunction]
-/// Converts Greek numeral in classic or positional form to Arabic integer.
-fn greek_to_arabic(numeral: &str, positional: bool, capital: bool) -> PyResult<BigInt> {
+/// Converts Greek numeral in classic or positional form to an Arabic integer or float.
+fn greek_to_arabic<'py>(
+    py: Python<'py>,
+    numeral: &str,
+    positional: bool,
+    capital: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (negative, numeral) = match numeral.strip_prefix('-') {
+        Some(numeral) => (true, numeral),
+        None => (false, numeral),
+    };
+    if let Some((integer_numeral, fraction)) = fractional_numeral_parts(numeral)? {
+        let whole = greek_to_arabic_integer(integer_numeral, positional, capital)?;
+        let value = decimal_float_value(&whole, fraction, negative)?;
+        return Ok(PyFloat::new(py, value).into_any());
+    }
+
+    let mut total = greek_to_arabic_integer(numeral, positional, capital)?;
+    if negative {
+        total = -total;
+    }
+    Ok(total.into_pyobject(py)?.into_any())
+}
+
+fn greek_to_arabic_integer(numeral: &str, positional: bool, capital: bool) -> PyResult<BigInt> {
     if positional {
         return position_greek_to_arabic(numeral, capital);
     }

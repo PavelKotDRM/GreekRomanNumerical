@@ -212,4 +212,4 @@ setup.py
 setup.cfg
 
 # PyO3 debug symbols generated for the native extension
-GreekRomanUtils/_native*.pdb
+*.pdb

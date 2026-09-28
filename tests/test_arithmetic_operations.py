@@ -293,6 +293,30 @@ class TestGreekNumberArithmetic:
             num + "5"
 
 
+class TestNumberEdgeCases:
+    @pytest.mark.parametrize("number_type", [GreekNumber, RomanNumber])
+    @pytest.mark.parametrize(
+        ("dividend", "divisor", "expected"),
+        [(7, 3, 2), (-7, 3, -2), (7, -3, -2), (-7, -3, 2)],
+    )
+    def test_division_truncates_toward_zero(self, number_type, dividend, divisor, expected):
+        result = number_type(dividend) / number_type(divisor)
+
+        assert result.get_number() == expected
+
+    @pytest.mark.parametrize("number_type", [GreekNumber, RomanNumber])
+    def test_division_by_zero_raises(self, number_type):
+        with pytest.raises(ZeroDivisionError):
+            number_type(7) / 0
+
+    @pytest.mark.parametrize(
+        ("number_type", "numeral"),
+        [(GreekNumber, "ε"), (RomanNumber, "V")],
+    )
+    def test_equality_with_numeral_string(self, number_type, numeral):
+        assert number_type(5) == numeral
+
+
 class TestRomanNumberArithmetic:
     """Тесты арифметических операций для RomanNumber"""
 
@@ -438,3 +462,24 @@ class TestMixedArithmetic:
         roman = RomanNumber(10)
         roman += 5
         assert (roman.get_number(), str(roman)) == (15, "XV")
+
+    @pytest.mark.parametrize(
+        ("number_type", "expected_numeral"),
+        [(GreekNumber, "α.25"), (RomanNumber, "I.25")],
+    )
+    def test_float_values_preserve_fraction_and_numeral(self, number_type, expected_numeral):
+        number = number_type(1.25)
+
+        assert number.get_number() == 1.25
+        assert str(number) == expected_numeral
+
+    @pytest.mark.parametrize("number_type", [GreekNumber, RomanNumber])
+    def test_float_operands_preserve_fraction(self, number_type):
+        number = number_type(1.5)
+
+        assert (number + 0.25).get_number() == 1.75
+        assert (number * 2.0).get_number() == 3.0
+        assert (number / 2.0).get_number() == 0.75
+
+    def test_integer_division_keeps_truncating_behavior(self):
+        assert (GreekNumber(10) / 3).get_number() == 3

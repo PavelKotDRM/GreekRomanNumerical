@@ -13,6 +13,8 @@ The library converts Arabic numbers, such as `1234`, to Roman equivalents, such 
 
 This module can also output Greek numbers in different formats. For example, the number `20005003001` can be represented as `Κ___Ε__Γ_Α` or `Κ~Ε~Γ~Α`. In addition, it is possible to output the text name of the digits, for example, `Kappa macron Epsilon macron Gamma macron Alpha`, or output them in lowercase.  
 
+Finite float values use a decimal point followed by Arabic decimal digits for the fractional part, for example `1.25` becomes `I.25` or `α.25`.
+
 ### Installation
 
 Install the package using pip:
@@ -155,6 +157,8 @@ There are proprietary data types `GreekNumber` and `RomanNumber` for working wit
 Библиотека преобразует арабские числа, такие как `1234`, в римские эквиваленты, например, `MCCXXXIV`, или греческие — `Α_ΣΛΔ`.
 
 Также этот модуль может выводить греческие цифры в разных форматах. Например, число `20005003001` можно представить как `Κ___Ε__Γ_Α` или `Κ~Ε~Γ~Α`. Кроме того, есть возможность выводить текстовое название цифр, например, `Kappa macron Epsilon macron Gamma macron Alpha`, или выводить их в нижнем регистре.
+
+Конечные значения `float` записываются через точку, после которой идут обычные десятичные цифры дробной части: например, `1.25` преобразуется в `I.25` или `α.25`.
 
 ### Установка
 
