@@ -23,6 +23,10 @@ Install the package using pip:
 pip install GreekRomanUtils
 ```
 
+### Detailed usage
+
+For step-by-step examples of the converters, number formats, arithmetic, and backend selection, see the [detailed usage guide](./docs/USAGE.md).
+
 ### Hybrid backend (Python + Rust)
 
 Starting from this migration stage, the public API stays unchanged while internal conversion logic can run on a Rust backend.
@@ -167,6 +171,10 @@ There are proprietary data types `GreekNumber` and `RomanNumber` for working wit
 ```bash
 pip install GreekRomanUtils
 ```
+
+### Подробная документация
+
+Подробные примеры конвертации, форматов чисел, арифметики и настройки backend собраны в [руководстве на русском языке](./docs/USAGE_RU.md). См. также [английскую версию](./docs/USAGE.md).
 
 ### Гибридный backend (Python + Rust)
 
