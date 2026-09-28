@@ -624,7 +624,7 @@ wheels = [
 
 [[package]]
 name = "greekromanutils"
-version = "1.2.0"
+version = "1.4.0"
 source = { editable = "." }
 
 [package.dev-dependencies]
