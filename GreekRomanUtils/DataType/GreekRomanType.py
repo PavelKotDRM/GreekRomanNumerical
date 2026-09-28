@@ -123,9 +123,21 @@ class BaseNumberVirtual:
         return self._apply_binary_operation(other, operator.pow)
 
     def __eq__(self, other: object) -> bool:
+        if isinstance(other, str):
+            return str(self) == other
+        if not isinstance(other, BaseNumberVirtual) and not isinstance(
+            other, self._supported_type
+        ):
+            return False
         return self._apply_comparison(other, operator.eq)
 
     def __ne__(self, other: object) -> bool:
+        if isinstance(other, str):
+            return str(self) != other
+        if not isinstance(other, BaseNumberVirtual) and not isinstance(
+            other, self._supported_type
+        ):
+            return True
         return self._apply_comparison(other, operator.ne)
 
     def __lt__(self, other: object) -> bool:
@@ -251,16 +263,6 @@ class GreekNumber(BaseNumberVirtual):
         if self._value is None:
             raise TypeError("Value is None, length is undefined")
         return len(self._value)
-
-    def __eq__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            return self._number == other._number
-        elif isinstance(other, str):
-            return str(self._value) == other
-        elif isinstance(other, self._supported_type):
-            return self._number == other
-        else:
-            raise TypeError("Unsupported operand type")
 
     def get_str(self) -> str:
         """Converting a Unicode Greek number to a name
@@ -524,13 +526,3 @@ class RomanNumber(BaseNumberVirtual):
         if self._value is None:
             raise TypeError("Value is None, length is undefined")
         return len(self._value)
-
-    def __eq__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            return self._number == other._number
-        elif isinstance(other, str):
-            return self.get_value() == other
-        elif isinstance(other, self._supported_type):
-            return self._number == other
-        else:
-            raise TypeError("Unsupported operand type")

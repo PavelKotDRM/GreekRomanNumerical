@@ -327,6 +327,19 @@ class TestNumberEdgeCases:
     def test_equality_with_numeral_string(self, number_type, numeral):
         assert number_type(5) == numeral
 
+    @pytest.mark.parametrize("number_type", [GreekNumber, RomanNumber])
+    @pytest.mark.parametrize("unsupported", [None, object()])
+    def test_equality_with_unsupported_type(self, number_type, unsupported):
+        number = number_type(5)
+
+        assert (number == unsupported) is False
+        assert (number != unsupported) is True
+
+    @pytest.mark.parametrize("number_type", [GreekNumber, RomanNumber])
+    def test_ordering_with_unsupported_type_raises(self, number_type):
+        with pytest.raises(TypeError):
+            number_type(5) < object()
+
 
 class TestRomanNumberArithmetic:
     """Тесты арифметических операций для RomanNumber"""
