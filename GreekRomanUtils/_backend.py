@@ -26,7 +26,7 @@ def _should_force_python() -> bool:
 def _load_rust_backend() -> BackendProtocol | None:
     try:
         from . import _rust_impl
-    except Exception:
+    except ImportError:
         return None
     return _rust_impl
 

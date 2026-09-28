@@ -32,6 +32,16 @@ def test_greek_arabic_to_numeral_equivalence(number, positional, capital):
     )
 
 
+@pytest.mark.parametrize("positional", [False, True])
+@pytest.mark.parametrize("capital", [False, True])
+def test_large_greek_number_equivalence(positional, capital):
+    number = 2**63
+    numeral = _python_impl.arabic_to_greek(number, positional, capital)
+
+    assert rust_impl.arabic_to_greek(number, positional, capital) == numeral
+    assert rust_impl.greek_to_arabic(numeral, positional, capital) == number
+
+
 @pytest.mark.parametrize(
     "numeral,positional,capital",
     [

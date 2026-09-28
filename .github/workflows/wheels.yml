@@ -34,7 +34,7 @@ jobs:
         with:
           command: build
           manylinux: auto
-          args: --release --manifest-path rust/Cargo.toml --interpreter 3.11 3.12 3.13
+          args: --release --manifest-path rust/Cargo.toml --interpreter 3.11 3.12 3.13 3.14
 
       - name: Upload wheel artifacts
         uses: actions/upload-artifact@v4

@@ -408,6 +408,12 @@ class TestMixedArithmetic:
         # Результат должен быть преобразован в int
         assert isinstance(result.get_number(), int)
 
+    def test_division_preserves_large_integer_precision(self):
+        number = 10**400
+
+        assert (GreekNumber(number) / 3).get_number() == number // 3
+        assert (GreekNumber(-number) / 3).get_number() == -(number // 3)
+
     def test_positional_preservation_in_operations(self):
         """Тест сохранения позиционности в операциях"""
         num1 = GreekNumber(number=1000, positional=True)
@@ -423,3 +429,12 @@ class TestMixedArithmetic:
         result = num1 + num2
         # Проверяем, что результат также с заглавными буквами
         assert result.get_capital() == True
+
+    def test_inplace_operations_refresh_string_value(self):
+        greek = GreekNumber(number=10)
+        greek += 5
+        assert (greek.get_number(), str(greek)) == (15, "ιε")
+
+        roman = RomanNumber(10)
+        roman += 5
+        assert (roman.get_number(), str(roman)) == (15, "XV")

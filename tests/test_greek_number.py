@@ -18,6 +18,12 @@ class TestGreekNumber:
         assert greek.get_number() == 5
         assert str(greek) == "ε"
 
+    @pytest.mark.parametrize("positional", [False, True])
+    def test_init_with_empty_value(self, positional):
+        greek = GreekNumber(value="", positional=positional)
+        assert greek.get_number() == 0
+        assert str(greek) == ""
+
     def test_init_no_parameters(self):
         """Тест инициализации без параметров"""
         with pytest.raises(ValueError):

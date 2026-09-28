@@ -1,5 +1,8 @@
+from typing import ClassVar
+
+
 class GreekAlphabet:
-    GREEK_ALPHABET_DICT = {
+    GREEK_ALPHABET_DICT: ClassVar[dict[str, str]] = {
         'α': 'alpha', 'β': 'beta', 'γ': 'gamma', 'δ': 'delta', 'ε': 'epsilon',
         'ζ': 'zeta', 'η': 'eta', 'θ': 'theta', 'ι': 'iota', 'κ': 'kappa',
         'λ': 'lambda', 'μ': 'mu', 'ν': 'nu', 'ξ': 'xi', 'ο': 'omicron',
@@ -7,7 +10,7 @@ class GreekAlphabet:
         'φ': 'phi', 'χ': 'chi', 'ψ': 'psi', 'ω': 'omega', 'ϝ': 'digamma', "ϡ": 'Sampi',
         '_': 'underscape', '~': 'macron'
     }
-    GREEK_ALPHABET_DICT_CAPITAL = {
+    GREEK_ALPHABET_DICT_CAPITAL: ClassVar[dict[str, str]] = {
         'Α': 'Alpha', 'Β': 'Beta', 'Γ': 'Gamma', 'Δ': 'Delta', 'Ε': 'Epsilon',
         'Ζ': 'Zeta', 'Η': 'Eta', 'Θ': 'Theta', 'Ι': 'Iota', 'Κ': 'Kappa',
         'Λ': 'Lambda', 'Μ': 'Mu', 'Ν': 'Nu', 'Ξ': 'Xi', 'Ο': 'Omicron',
@@ -15,7 +18,7 @@ class GreekAlphabet:
         'Φ': 'Phi', 'Χ': 'Chi', 'Ψ': 'Psi', 'Ω': 'Omega', 'Ϝ': 'Digamma', "Ϡ": 'Sampi',
         '_': 'Underscape', '~': 'Macron'
     }
-    GREEK_NUMERAL_LIST = [
+    GREEK_NUMERAL_LIST: ClassVar[list[tuple[str, int]]] = [
         ("α", 1), ("β", 2), ("γ", 3),
         ("δ", 4), ("ε", 5), ("ϝ", 6),
         ("ζ", 7), ("η", 8), ("θ", 9),
@@ -26,7 +29,7 @@ class GreekAlphabet:
         ("υ", 400), ("φ", 500), ("χ", 600),
         ("ψ", 700), ("ω", 800), ("ϡ", 900)
     ]
-    GREEK_NUMERAL_LIST_CAPITAL = [
+    GREEK_NUMERAL_LIST_CAPITAL: ClassVar[list[tuple[str, int]]] = [
         ("Α", 1), ("Β", 2), ("Γ", 3),
         ("Δ", 4), ("Ε", 5), ("Ϝ", 6),
         ("Ζ", 7), ("Η", 8), ("Θ", 9),
@@ -37,7 +40,7 @@ class GreekAlphabet:
         ("Υ", 400), ("Φ", 500), ("Χ", 600),
         ("Ψ", 700), ("Ω", 800), ("Ϡ", 900)
     ]
-    GREEK_NUMERAL_DICT = {
+    GREEK_NUMERAL_DICT: ClassVar[dict[str, int]] = {
         "α": 1, "β": 2, "γ": 3,
         "δ": 4, "ε": 5, "ϝ": 6,
         "ζ": 7, "η": 8, "θ": 9,
@@ -48,7 +51,7 @@ class GreekAlphabet:
         "υ": 400, "φ": 500, "χ": 600,
         "ψ": 700, "ω": 800, "ϡ": 900
     }
-    GREEK_NUMERAL_DICT_CAPITAL = {
+    GREEK_NUMERAL_DICT_CAPITAL: ClassVar[dict[str, int]] = {
         "Α": 1, "Β": 2, "Γ": 3,
         "Δ": 4, "Ε": 5, "Ϝ": 6,
         "Ζ": 7, "Η": 8, "Θ": 9,
@@ -61,7 +64,7 @@ class GreekAlphabet:
     }
 
 class RomanNumberAlphabet:
-    ROMAN_NUMERAL_LIST = [
+    ROMAN_NUMERAL_LIST: ClassVar[list[tuple[str, int]]] = [
         ("~M", 1000000), ("~D", 500000), ("~C", 100000),
         ("~L", 50000), ("~X", 10000), ("~V", 5000),  # "~" indicates a Macron
         ("M", 1000), ("CM", 900), ("D", 500),
@@ -70,7 +73,7 @@ class RomanNumberAlphabet:
         ("IX", 9),   ("V", 5),    ("IV", 4),
         ("I", 1)
     ]
-    ROMAN_NUMERAL_DICT = {
+    ROMAN_NUMERAL_DICT: ClassVar[dict[str, int]] = {
         "~M": 1000000, "~D": 500000, "~C": 100000,
         "~L": 50000, "~X": 10000, "~V": 5000,  # "~" indicates a Macron
         "M": 1000, "CM": 900, "D": 500,

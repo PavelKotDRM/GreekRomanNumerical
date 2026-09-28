@@ -1,12 +1,11 @@
+from ._backend import get_backend
 from .DataStorage.Alphabet import GreekAlphabet, RomanNumberAlphabet
 from .DataType.GreekRomanType import GreekNumber, RomanNumber
-from ._backend import get_backend
-
 
 _GREEK_NAME_TO_UNICODE = {v: k for k, v in GreekAlphabet.GREEK_ALPHABET_DICT.items()}
 _GREEK_NAME_TO_UNICODE_CAPITAL = {v: k for k, v in GreekAlphabet.GREEK_ALPHABET_DICT_CAPITAL.items()}
 
-class GreekConvert():
+class GreekConvert:
 
     def change_capital(self, capital:bool):
         """Changing the case
@@ -118,7 +117,7 @@ class GreekConvert():
                 raise ValueError(f"Invalid name: {word}")
         return "".join(chars)
 
-class RomanConvert():
+class RomanConvert:
 
     def __init__(self):
         self._backend = get_backend()

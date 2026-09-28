@@ -83,8 +83,8 @@ pytest --cov=GreekRomanUtils --cov-report=html
 
 ## Требования
 
-- Python >= 3.7
-- pytest >= 7.4.4
+- Python >= 3.11
+- pytest >= 9.1.1
 
 ## Примечания
 

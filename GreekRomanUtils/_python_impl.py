@@ -1,5 +1,5 @@
-from .DataType.GreekRomanType import GreekNumber, RomanNumber
 from .DataStorage.Alphabet import RomanNumberAlphabet
+from .DataType.GreekRomanType import GreekNumber, RomanNumber
 
 name = "python"
 
@@ -31,8 +31,6 @@ def arabic_to_greek(number: int, positional: bool, capital: bool) -> str:
 
 
 def greek_to_arabic(numeral: str, positional: bool, capital: bool) -> int:
-    if numeral == "":
-        return 0
     result = GreekNumber(value=numeral, positional=positional, capital=capital).get_number()
     if result is None:
         raise ValueError("Failed to convert Greek numeral to Arabic")

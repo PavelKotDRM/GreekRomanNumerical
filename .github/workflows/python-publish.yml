@@ -19,7 +19,12 @@ permissions:
 
 jobs:
   test:
+    name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15.0rc2"]
     steps:
     - uses: actions/checkout@v6
 
@@ -32,10 +37,10 @@ jobs:
         version: "latest"
     
     - name: Set up Python
-      run: uv python install
+      run: uv python install "${{ matrix.python-version }}"
     
     - name: Install dependencies
-      run: uv sync --all-extras --dev
+      run: uv sync --locked --group dev --python "${{ matrix.python-version }}"
 
     - name: Run typecheck
       run: uv run ty check --exclude tests/

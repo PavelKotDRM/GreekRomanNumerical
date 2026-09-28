@@ -1,25 +1,29 @@
-from ..DataStorage.Alphabet import GreekAlphabet, RomanNumberAlphabet
-from typing import Optional, Union
+from __future__ import annotations
 
+import operator
+from collections.abc import Callable
+from typing import Any, Self
+
+from ..DataStorage.Alphabet import GreekAlphabet, RomanNumberAlphabet
 
 _GREEK_NUMERAL_REVERSE = {v: k for k, v in GreekAlphabet.GREEK_NUMERAL_DICT.items()}
 _GREEK_NUMERAL_REVERSE_CAPITAL = {v: k for k, v in GreekAlphabet.GREEK_NUMERAL_DICT_CAPITAL.items()}
 
-class BaseNumberVirtual():
-    _number: Union[int, None]
-    _value: Union[str, list, None]
+class BaseNumberVirtual:
+    _number: int | None
+    _value: str | list | None
     _positional: bool
     _capital: bool
     _debug: bool
     _supported_type = (int,)
 
-    def get_number(self) -> Union[int, None]:
+    def get_number(self) -> int | None:
         return self._number
     
-    def set_number(self, number: Union[int, None]) -> None:
+    def set_number(self, number: int | None) -> None:
         self._number = number
 
-    def __init__(self, number: Optional[int] = None, value: Optional[str] = None, positional: bool = False, capital: bool = False, debug: bool = False) -> None:
+    def __init__(self, number: int | None = None, value: str | None = None, positional: bool = False, capital: bool = False, debug: bool = False) -> None:
         raise NotImplementedError("This is an abstract class")
         self._number = number
         self._value = number
@@ -27,7 +31,7 @@ class BaseNumberVirtual():
         self._capital = capital
         self._debug = debug
 
-    def _create_instance(self, number: Union[int, float]) -> object:
+    def _create_instance(self, number: float) -> object:
         if isinstance(number, int):
             return self.__class__(number)
         if isinstance(number, float):
@@ -35,194 +39,110 @@ class BaseNumberVirtual():
         else:
             raise TypeError("Unsupported type for instance creation")
     
-    def _update_value(self, number: Union[int, float]) -> None:
+    def _update_value(self, number: float) -> None:
         if isinstance(number, int):
-            self._number = number
+            self.set_number(number)
         elif isinstance(number, float):
-            self._number = int(number)
+            self.set_number(int(number))
         else:
             raise TypeError("Unsupported type for value update")
 
-    def __add__(self, other):
+    def _get_operand(self, other: object) -> Any:
         if isinstance(other, BaseNumberVirtual):
-            return self._create_instance(self._number + other._number)
-        elif isinstance(other, self._supported_type):
-            return self._create_instance(self._number + other)
-        else:
-            raise TypeError("Unsupported operand type")
-    
-    def __sub__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            return self._create_instance(self._number - other._number)
-        elif isinstance(other, self._supported_type):
-            return self._create_instance(self._number - other)
-        else:
-            raise TypeError("Unsupported operand type")
-        
-    def __mul__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            return self._create_instance(self._number * other._number)
-        elif isinstance(other, self._supported_type):
-            return self._create_instance(self._number * other)
-        else:
-            raise TypeError("Unsupported operand type")
-        
-    def __truediv__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            return self._create_instance(self._number / other._number)
-        elif isinstance(other, self._supported_type):
-            return self._create_instance(self._number / other)
-        else:
-            raise TypeError("Unsupported operand type")
-        
-    def __floordiv__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            return self._create_instance(self._number // other._number)
-        elif isinstance(other, self._supported_type):
-            return self._create_instance(self._number // other)
-        else:
-            raise TypeError("Unsupported operand type")
-    
-    def __mod__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            return self._create_instance(self._number % other._number)
-        elif isinstance(other, self._supported_type):
-            return self._create_instance(self._number % other)
-        else:
-            raise TypeError("Unsupported operand type")
-        
-    def __pow__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            return self._create_instance(self._number ** other._number)
-        elif isinstance(other, self._supported_type):
-            return self._create_instance(self._number ** other)
-        else:
-            raise TypeError("Unsupported operand type")
-    
-    def __eq__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            return self._number == other._number
-        elif isinstance(other, self._supported_type):
-            return self._number == other
-        else:
-            raise TypeError("Unsupported operand type")
-    
-    def __ne__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            return self._number != other._number
-        elif isinstance(other, self._supported_type):
-            return self._number != other
-        else:
-            raise TypeError("Unsupported operand type")
-        
-    def __lt__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            return self._number < other._number
-        elif isinstance(other, self._supported_type):
-            return self._number < other
-        else:
-            raise TypeError("Unsupported operand type")
-        
-    def __le__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            return self._number <= other._number
-        elif isinstance(other, self._supported_type):
-            return self._number <= other
-        else:
-            raise TypeError("Unsupported operand type")
-    
-    def __gt__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            return self._number > other._number
-        elif isinstance(other, self._supported_type):
-            return self._number > other
-        else:
-            raise TypeError("Unsupported operand type")
-        
-    def __ge__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            return self._number >= other._number
-        elif isinstance(other, self._supported_type):
-            return self._number >= other
-        else:
-            raise TypeError("Unsupported operand type")
-    
-    def __iadd__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            self._number += other._number
-            self._update_value(self._number)
-        elif isinstance(other, self._supported_type):
-            self._number += other
-            self._update_value(self._number)
-        else:
-            raise TypeError("Unsupported operand type")
+            return other._number
+        if isinstance(other, self._supported_type):
+            return other
+        raise TypeError("Unsupported operand type")
+
+    def _apply_binary_operation(
+        self,
+        other: object,
+        operation: Callable[[Any, Any], Any],
+    ) -> object:
+        return self._create_instance(operation(self._number, self._get_operand(other)))
+
+    def _apply_inplace_operation(
+        self,
+        other: object,
+        operation: Callable[[Any, Any], Any],
+    ) -> Self:
+        result = operation(self._number, self._get_operand(other))
+        self._update_value(result)
         return self
-    
-    def __isub__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            self._number -= other._number
-            self._update_value(self._number)
-        elif isinstance(other, self._supported_type):
-            self._number -= other
-            self._update_value(self._number)
-        else:
-            raise TypeError("Unsupported operand type")
-        return self
-    
-    def __imul__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            self._number *= other._number
-            self._update_value(self._number)
-        elif isinstance(other, self._supported_type):
-            self._number *= other
-            self._update_value(self._number)
-        else:
-            raise TypeError("Unsupported operand type")
-        return self
-    
-    def __itruediv__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            self._number /= other._number
-            self._update_value(self._number)
-        elif isinstance(other, self._supported_type):
-            self._number /= other
-            self._update_value(self._number)
-        else:
-            raise TypeError("Unsupported operand type")
-        return self
-    
-    def __ifloordiv__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            self._number //= other._number
-            self._update_value(self._number)
-        elif isinstance(other, self._supported_type):
-            self._number //= other
-            self._update_value(self._number)
-        else:
-            raise TypeError("Unsupported operand type")
-        return self
-    
-    def __imod__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            self._number %= other._number
-            self._update_value(self._number)
-        elif isinstance(other, self._supported_type):
-            self._number %= other
-            self._update_value(self._number)
-        else:
-            raise TypeError("Unsupported operand type")
-        return self
-    
-    def __ipow__(self, other):
-        if isinstance(other, BaseNumberVirtual):
-            self._number **= other._number
-            self._update_value(self._number)
-        elif isinstance(other, self._supported_type):
-            self._number **= other
-            self._update_value(self._number)
-        else:
-            raise TypeError("Unsupported operand type")
-        return self
+
+    def _apply_comparison(
+        self,
+        other: object,
+        operation: Callable[[Any, Any], bool],
+    ) -> bool:
+        return operation(self._number, self._get_operand(other))
+
+    @staticmethod
+    def _truncating_division(dividend: int, divisor: int) -> int:
+        if divisor == 0:
+            raise ZeroDivisionError("division by zero")
+        quotient = abs(dividend) // abs(divisor)
+        return -quotient if (dividend < 0) != (divisor < 0) else quotient
+
+    def __add__(self, other: object) -> object:
+        return self._apply_binary_operation(other, operator.add)
+
+    def __sub__(self, other: object) -> object:
+        return self._apply_binary_operation(other, operator.sub)
+
+    def __mul__(self, other: object) -> object:
+        return self._apply_binary_operation(other, operator.mul)
+
+    def __truediv__(self, other: object) -> object:
+        return self._apply_binary_operation(other, self._truncating_division)
+
+    def __floordiv__(self, other: object) -> object:
+        return self._apply_binary_operation(other, operator.floordiv)
+
+    def __mod__(self, other: object) -> object:
+        return self._apply_binary_operation(other, operator.mod)
+
+    def __pow__(self, other: object) -> object:
+        return self._apply_binary_operation(other, operator.pow)
+
+    def __eq__(self, other: object) -> bool:
+        return self._apply_comparison(other, operator.eq)
+
+    def __ne__(self, other: object) -> bool:
+        return self._apply_comparison(other, operator.ne)
+
+    def __lt__(self, other: object) -> bool:
+        return self._apply_comparison(other, operator.lt)
+
+    def __le__(self, other: object) -> bool:
+        return self._apply_comparison(other, operator.le)
+
+    def __gt__(self, other: object) -> bool:
+        return self._apply_comparison(other, operator.gt)
+
+    def __ge__(self, other: object) -> bool:
+        return self._apply_comparison(other, operator.ge)
+
+    def __iadd__(self, other: object) -> Self:
+        return self._apply_inplace_operation(other, operator.add)
+
+    def __isub__(self, other: object) -> Self:
+        return self._apply_inplace_operation(other, operator.sub)
+
+    def __imul__(self, other: object) -> Self:
+        return self._apply_inplace_operation(other, operator.mul)
+
+    def __itruediv__(self, other: object) -> Self:
+        return self._apply_inplace_operation(other, self._truncating_division)
+
+    def __ifloordiv__(self, other: object) -> Self:
+        return self._apply_inplace_operation(other, operator.floordiv)
+
+    def __imod__(self, other: object) -> Self:
+        return self._apply_inplace_operation(other, operator.mod)
+
+    def __ipow__(self, other: object) -> Self:
+        return self._apply_inplace_operation(other, operator.pow)
     
     def __neg__(self):
         if self._number is None:
@@ -236,7 +156,7 @@ class BaseNumberVirtual():
 
 class GreekNumber(BaseNumberVirtual):
 
-    def set_number(self, number: Union[int, None]) -> None:
+    def set_number(self, number: int | None) -> None:
         self._number = number
         if not self._positional:
             self._convert_arabic_to_greek(number)
@@ -263,7 +183,7 @@ class GreekNumber(BaseNumberVirtual):
     def get_capital(self) -> bool:
         return self._capital
 
-    def __init__(self, number: Optional[int] = None, value: Optional[str] = None, positional: bool = False, capital: bool = False, debug: bool = False) -> None:
+    def __init__(self, number: int | None = None, value: str | None = None, positional: bool = False, capital: bool = False, debug: bool = False) -> None:
         self._capital = capital
         self._debug = debug
         self._positional = positional
@@ -271,16 +191,17 @@ class GreekNumber(BaseNumberVirtual):
         self._value = value
         if number is None and value is None:
             raise ValueError("You must specify a number")
-        if not value and not positional:
-            self._convert_arabic_to_greek(number)
-        elif not value and positional:
-            self._convert_arabic_to_position_greek(number)
-        elif value and not positional:
-            self._convert_greek_to_arabic(value)
-        elif value and positional:
+        if value is None:
+            if positional:
+                self._convert_arabic_to_position_greek(number)
+            else:
+                self._convert_arabic_to_greek(number)
+        elif positional:
             self._convert_position_greek_to_arabic(value)
+        else:
+            self._convert_greek_to_arabic(value)
 
-    def _create_instance(self, number: Union[int, float]) -> object:
+    def _create_instance(self, number: float) -> object:
         if isinstance(number, int):
             return self.__class__(number, positional=self._positional, capital=self._capital)
         elif isinstance(number, float):
@@ -291,8 +212,7 @@ class GreekNumber(BaseNumberVirtual):
     def __iter__(self):
         if self._value is None:
             raise TypeError("Value is None, cannot iterate")
-        for item in self._value:
-            yield item
+        yield from self._value
 
     def __str__(self) -> str:
         if isinstance(self._value, str):
@@ -349,7 +269,7 @@ class GreekNumber(BaseNumberVirtual):
                 raise ValueError(f"Invalid character {item}")
         return " ".join(parts)
 
-    def _convert_arabic_to_greek(self, number: Union[int, None]) -> None:
+    def _convert_arabic_to_greek(self, number: int | None) -> None:
         if not (isinstance(number, int)):
             raise TypeError("The number must be an integer and be of type int")
         greek_numerals_list = (
@@ -380,7 +300,7 @@ class GreekNumber(BaseNumberVirtual):
                     continue
         self._value = ''.join(display_numerals)
 
-    def _convert_arabic_to_position_greek(self, number: Union[int, None]) -> Union[str, None]:
+    def _convert_arabic_to_position_greek(self, number: int | None) -> str | None:
         if not (isinstance(number, int)):
             raise TypeError("The number must be an integer and be of type int")
         reverse_dict = _GREEK_NUMERAL_REVERSE_CAPITAL if self._capital else _GREEK_NUMERAL_REVERSE
@@ -407,7 +327,7 @@ class GreekNumber(BaseNumberVirtual):
             groups.append(''.join(group_chars))
         self._value = '~'.join(groups)
 
-    def _convert_greek_to_arabic(self, greek_numeral: str) -> Union[int, None]:
+    def _convert_greek_to_arabic(self, greek_numeral: str) -> int | None:
         number = 0
         if not (isinstance(greek_numeral, str)):
             raise TypeError("The number must be a string and be of type string")
@@ -439,7 +359,7 @@ class GreekNumber(BaseNumberVirtual):
         number += last_number
         self._number = number
     
-    def _convert_position_greek_to_arabic(self, greek_numeral: str) -> Union[int, None]:
+    def _convert_position_greek_to_arabic(self, greek_numeral: str) -> int | None:
         if not (isinstance(greek_numeral, str)):
             raise TypeError("The number must be a string and be of type string")
         number = 0
@@ -464,6 +384,12 @@ class GreekNumber(BaseNumberVirtual):
 
 
 class RomanNumber(BaseNumberVirtual):
+
+    def set_number(self, number: int | None) -> None:
+        if not isinstance(number, int):
+            raise TypeError("The number must be an integer and be of type int")
+        self._number = number
+        self._convert_arabic_to_roman(number)
 
     def get_value(self) -> str:
         if isinstance(self._value, list):
@@ -493,8 +419,7 @@ class RomanNumber(BaseNumberVirtual):
     def __iter__(self):
         if self._value is None:
             raise TypeError("Value is None, cannot iterate")
-        for item in self._value:
-            yield item
+        yield from self._value
 
     def __getitem__(self, item):
         if self._value is None:
