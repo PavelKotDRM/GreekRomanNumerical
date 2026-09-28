@@ -465,7 +465,7 @@ class TestMixedArithmetic:
 
     @pytest.mark.parametrize(
         ("number_type", "expected_numeral"),
-        [(GreekNumber, "α.25"), (RomanNumber, "I.25")],
+        [(GreekNumber, "α.(β:ε)"), (RomanNumber, "I.(II:V)")],
     )
     def test_float_values_preserve_fraction_and_numeral(self, number_type, expected_numeral):
         number = number_type(1.25)
@@ -483,3 +483,21 @@ class TestMixedArithmetic:
 
     def test_integer_division_keeps_truncating_behavior(self):
         assert (GreekNumber(10) / 3).get_number() == 3
+
+    @pytest.mark.parametrize(
+        ("number", "expected_roman", "expected_greek"),
+        [
+            (1.25, "I.(II:V)", "α.(β:ε)"),
+            (1.05, "I.(0:V)", "α.(0:ε)"),
+            (0.5, ".(V)", ".(ε)"),
+        ],
+    )
+    def test_float_fraction_is_encoded_digit_by_digit(
+        self,
+        number,
+        expected_roman,
+        expected_greek,
+    ):
+        assert str(RomanNumber(number)) == expected_roman
+        assert str(GreekNumber(number)) == expected_greek
+        assert GreekNumber(value=expected_greek).get_number() == number

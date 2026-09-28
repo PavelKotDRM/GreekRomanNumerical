@@ -98,15 +98,15 @@ def test_non_finite_float_values_are_rejected(backend, number):
 def test_public_converters_roundtrip_float_values():
     roman_converter = RomanConvert()
     roman_number = roman_converter.convert(1.05)
-    assert str(roman_number) == "I.05"
+    assert str(roman_number) == "I.(0:V)"
     assert roman_number.get_number() == 1.05
-    assert roman_converter.convert_to_arabic("I.05") == 1.05
+    assert roman_converter.convert_to_arabic("I.(0:V)") == 1.05
 
     greek_converter = GreekConvert(positional=True, capital=True)
     greek_number = greek_converter.convert(1.05)
-    assert str(greek_number) == "Α.05"
+    assert str(greek_number) == "Α.(0:Ε)"
     assert isinstance(GreekConvert().convert(2.0).get_number(), float)
-    assert greek_converter.convert_to_arabic("Α.05") == 1.05
+    assert greek_converter.convert_to_arabic("Α.(0:Ε)") == 1.05
 
 
 @pytest.mark.parametrize(

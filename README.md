@@ -13,7 +13,7 @@ The library converts Arabic numbers, such as `1234`, to Roman equivalents, such 
 
 This module can also output Greek numbers in different formats. For example, the number `20005003001` can be represented as `Κ___Ε__Γ_Α` or `Κ~Ε~Γ~Α`. In addition, it is possible to output the text name of the digits, for example, `Kappa macron Epsilon macron Gamma macron Alpha`, or output them in lowercase.  
 
-Finite float values use a decimal point followed by Arabic decimal digits for the fractional part, for example `1.25` becomes `I.25` or `α.25`.
+Finite float fractions are encoded digit by digit, with digit tokens separated by colons. For example, `1.25` becomes `I.(II:V)` or `α.(β:ε)`; zero digits use `0` to preserve decimal places.
 
 ### Installation
 
@@ -158,7 +158,7 @@ There are proprietary data types `GreekNumber` and `RomanNumber` for working wit
 
 Также этот модуль может выводить греческие цифры в разных форматах. Например, число `20005003001` можно представить как `Κ___Ε__Γ_Α` или `Κ~Ε~Γ~Α`. Кроме того, есть возможность выводить текстовое название цифр, например, `Kappa macron Epsilon macron Gamma macron Alpha`, или выводить их в нижнем регистре.
 
-Конечные значения `float` записываются через точку, после которой идут обычные десятичные цифры дробной части: например, `1.25` преобразуется в `I.25` или `α.25`.
+Дробная часть конечного `float` кодируется по цифрам, разделённым двоеточиями. Например, `1.25` преобразуется в `I.(II:V)` или `α.(β:ε)`; нулевой разряд обозначается `0`, чтобы сохранить точность.
 
 ### Установка
 

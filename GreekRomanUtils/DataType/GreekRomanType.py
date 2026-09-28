@@ -442,7 +442,11 @@ class RomanNumber(BaseNumberVirtual):
             if negative:
                 self._value.insert(0, "-")
             if fraction:
-                self._value.extend([".", fraction])
+                encoded_digits = ":".join(
+                    "0" if digit == "0" else RomanNumber(int(digit)).get_value()
+                    for digit in fraction
+                )
+                self._value.extend([".(", encoded_digits, ")"])
             return
         if not (isinstance(number, int)):
             raise TypeError("The number must be an integer and be of type int")
