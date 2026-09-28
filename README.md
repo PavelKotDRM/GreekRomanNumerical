@@ -2,7 +2,7 @@
 
 ## Module converting Arabic numerals to Greek and Roman numbers
 
-**Version:** 1.2.0\
+**Version:** 1.4.0\
 **Supported Python:** 3.11-3.14 stable; 3.15.0rc2 provisionally tested\
 **Repository:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
 **License:** Apache 2.0
@@ -14,6 +14,20 @@ The library converts Arabic numbers, such as `1234`, to Roman equivalents, such 
 This module can also output Greek numbers in different formats. For example, the number `20005003001` can be represented as `Κ___Ε__Γ_Α` or `Κ~Ε~Γ~Α`. In addition, it is possible to output the text name of the digits, for example, `Kappa macron Epsilon macron Gamma macron Alpha`, or output them in lowercase.  
 
 Finite float fractions are encoded digit by digit, with numeral tokens separated by colons. For example, `1.25` becomes `I.(II:V)` or `α.(β:ε)`. A zero digit is written as `_` for Roman numerals and classic Greek, or `~` for positional Greek; thus `1.05` becomes `I.(_:V)`, `α.(_:ε)`, or `α.(~:ε)`.
+
+### Historical-style fractions (optional)
+
+The [`historical_fractions`](./docs/USAGE.md#historical-style-fractions-optional) module adds an opt-in, modern notation without changing the default decimal-fraction format. Roman fractions use `S` (1/2), the uncia sign (1/12), and the semuncia sign (1/24); the value must be representable in steps of 1/24. Greek fractions use sums of unit fractions. The module also renders these notations as LaTeX or MathML.
+
+```python
+from GreekRomanUtils import historical_fractions
+
+historical_fractions.arabic_to_roman(0.5)  # ".(S)"
+historical_fractions.arabic_to_greek(3.14)  # "γ.(α/η+α/ξζ+α/ι_γ_υ)"
+historical_fractions.arabic_to_roman_latex(3.5)  # r"\text{III}+\frac{1}{2}"
+```
+
+These functions require the Rust extension. If it is unavailable or `GREEKROMAN_FORCE_PYTHON=1` selects the Python backend, historical-fraction calls raise `RuntimeError`; the existing `GreekConvert` and `RomanConvert` APIs continue to fall back to Python. See the [detailed guide](./docs/USAGE.md#historical-style-fractions-optional) for parsing and display APIs.
 
 ### Installation
 
@@ -29,7 +43,7 @@ For step-by-step examples of the converters, number formats, arithmetic, and bac
 
 ### Hybrid backend (Python + Rust)
 
-Starting from this migration stage, the public API stays unchanged while internal conversion logic can run on a Rust backend.
+The existing `GreekConvert` and `RomanConvert` APIs select the Rust backend when available and otherwise fall back to Python. The separate `historical_fractions` API uses the Rust extension directly and does not have a Python fallback.
 
 - Default behavior: try Rust backend first, fallback to Python automatically.
 - Force Python backend:
@@ -38,7 +52,7 @@ Starting from this migration stage, the public API stays unchanged while interna
 GREEKROMAN_FORCE_PYTHON=1
 ```
 
-The Rust bridge preserves Python's arbitrary-precision integers. The core library applies configured input, output, and Greek-group limits to bound resource use.
+The Rust bridge preserves Python's arbitrary-precision integers. The core library applies input, output, and Greek-group limits to bound resource use.
 
 ### Development environment and quality checks
 
@@ -116,10 +130,14 @@ uv run --group performance pytest benchmarks/test_backend_performance.py --bench
 
 The benchmark checks result equivalence before timing Roman, classic Greek, and positional Greek conversions in both backends. It reports measurements without enforcing a speed threshold because timings depend on the machine.
 
-### The structure of the project
+### Project structure
 
-There are two main classes: `GreekConvert` and `RomanConvert`. They implement the logic of converting to the corresponding numbers. There are also classes `GreekAlphabet` and `RomanNumberAlphabet`, which are used to store lists and dictionaries.  
-There are proprietary data types `GreekNumber` and `RomanNumber` for working with Greek and Roman numbers, which will allow you to perform basic mathematical operations with them.
+- `GreekRomanUtils/GreekRoman.py` exposes `GreekConvert` and `RomanConvert`; the number objects are `GreekNumber` and `RomanNumber`.
+- `GreekRomanUtils/_backend.py` selects and caches the standard conversion backend. `GreekRomanUtils/_python_impl.py` provides its Python fallback, while `GreekRomanUtils/_rust_impl.py` wraps the native extension.
+- `GreekRomanUtils/historical_fractions.py` exposes the optional historical notation and renderers. It requires the Rust extension and does not use the standard backend fallback.
+- The Rust extension delegates conversions to the `greekromannumerical-core` submodule, pinned at `v0.2.0`.
+
+See the [project architecture diagram](./Diagrams/Architecture.drawio.svg) for the module and backend relationships.
 
 ### Main functions
 
@@ -161,7 +179,7 @@ There are proprietary data types `GreekNumber` and `RomanNumber` for working wit
 
 ## Модуль преобразование арабских цифр в греческие и римские числа
 
-**Версия:** 1.2.0\
+**Версия:** 1.4.0\
 **Поддерживаемые версии Python:** 3.11-3.14 stable; 3.15.0rc2 проверяется предварительно\
 **Репозиторий:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
 **Лицензия:** Apache 2.0
@@ -173,6 +191,20 @@ There are proprietary data types `GreekNumber` and `RomanNumber` for working wit
 Также этот модуль может выводить греческие цифры в разных форматах. Например, число `20005003001` можно представить как `Κ___Ε__Γ_Α` или `Κ~Ε~Γ~Α`. Кроме того, есть возможность выводить текстовое название цифр, например, `Kappa macron Epsilon macron Gamma macron Alpha`, или выводить их в нижнем регистре.
 
 Дробная часть конечного `float` кодируется по цифрам, разделённым двоеточиями. Например, `1.25` преобразуется в `I.(II:V)` или `α.(β:ε)`. Нулевой разряд записывается как `_` для римского и классического греческого форматов, или `~` для позиционного греческого; поэтому `1.05` выглядит как `I.(_:V)`, `α.(_:ε)` или `α.(~:ε)`.
+
+### Дроби в исторически вдохновлённой записи (необязательно)
+
+Модуль [`historical_fractions`](./docs/USAGE_RU.md) добавляет современный дополнительный формат, не меняя стандартную десятичную запись дробей. Римские дроби используют `S` (1/2), знак унции (1/12) и полу-унции (1/24); значение должно представляться долями 1/24. Греческие дроби записываются суммами единичных дробей. Модуль также поддерживает рендеринг этих форматов в LaTeX и MathML.
+
+```python
+from GreekRomanUtils import historical_fractions
+
+historical_fractions.arabic_to_roman(0.5)  # ".(S)"
+historical_fractions.arabic_to_greek(3.14)  # "γ.(α/η+α/ξζ+α/ι_γ_υ)"
+historical_fractions.arabic_to_roman_latex(3.5)  # r"\text{III}+\frac{1}{2}"
+```
+
+Для этих функций требуется Rust-расширение. Если оно недоступно или выбран Python-backend через `GREEKROMAN_FORCE_PYTHON=1`, вызов исторических дробей приводит к `RuntimeError`; обычные API `GreekConvert` и `RomanConvert` сохраняют fallback на Python. Подробности о разборе и функциях отображения см. в [руководстве](./docs/USAGE_RU.md).
 
 ### Установка
 
@@ -188,7 +220,7 @@ pip install GreekRomanUtils
 
 ### Гибридный backend (Python + Rust)
 
-На этапе миграции публичный API не меняется, но внутренняя логика конвертации может выполняться через Rust backend.
+Существующие API `GreekConvert` и `RomanConvert` используют Rust-backend, если он доступен, и иначе переключаются на Python. Отдельный API `historical_fractions` требует Rust-расширение и не имеет Python-fallback.
 
 - Поведение по умолчанию: сначала попытка Rust backend, при недоступности автоматический fallback на Python.
 - Принудительное отключение Rust backend:
@@ -269,10 +301,14 @@ uv run --group performance pytest benchmarks/test_backend_performance.py --bench
 
 Перед замером тесты проверяют равенство результатов и затем измеряют Roman, classic Greek и positional Greek конвертации в обоих backend’ах. Порог скорости не задан: время зависит от машины и окружения.
 
-## Структура пректа
+## Структура проекта
 
-Есть два основных класса: `GreekConvert` и `RomanConvert`. Они реализуют логику преобразования в соответствующие числа. Также есть классы `GreekAlphabet` и `RomanNumberAlphabet`, которые используются для хранения списков и словарей.  
-Есть собственные типы данных `GreekNumber` и `RomanNumber` для работы с греческими и римскими числами, что позволит выполнять с ними базовые математические операции.
+- `GreekRomanUtils/GreekRoman.py` предоставляет `GreekConvert` и `RomanConvert`; числовые объекты — `GreekNumber` и `RomanNumber`.
+- `GreekRomanUtils/_backend.py` выбирает и кэширует backend стандартных конвертеров. `GreekRomanUtils/_python_impl.py` обеспечивает Python-fallback, а `GreekRomanUtils/_rust_impl.py` вызывает нативное расширение.
+- `GreekRomanUtils/historical_fractions.py` предоставляет дополнительную историческую запись и рендеринг; для неё требуется Rust-расширение без Python-fallback.
+- Rust-расширение передаёт преобразования в submodule `greekromannumerical-core`, закреплённый на `v0.2.0`.
+
+Связи модулей и backend показаны на [схеме архитектуры проекта](./Diagrams/Architecture.drawio.svg).
 
 ## Основные функции
 
@@ -308,8 +344,9 @@ uv run --group performance pytest benchmarks/test_backend_performance.py --bench
 - `get_value` — Получить строковое представление римского числа.
 - И базовые математические операции (+, -, *, /, //, %, **, ==, !=, <, <=, >, >=).
 
-**Схема пректа**  
-![ScheemProject](./Diagrams/Architecture.drawio.svg)
+**Архитектура проекта**
+
+![Архитектура проекта](./Diagrams/Architecture.drawio.svg)
 
 ## License
 

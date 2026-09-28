@@ -4,11 +4,13 @@
 //! conversions. Fractional digits are encoded as numeral tokens separated by `:`. Roman and
 //! classic Greek zero digits use `_`; positional Greek zero digits use `~`. For example,
 //! `1.05` is written as `I.(_:V)`, `α.(_:ε)`, or `α.(~:ε)`.
+//! The optional historical-fraction API also exposes LaTeX and MathML renderers.
 //!
 //! Conversion implementations are organized by responsibility in [`greek`] and [`roman`].
 
 mod common;
 pub mod greek;
+mod historical_fractions;
 pub mod roman;
 
 use greek::{arabic_to_greek, greek_to_arabic};
@@ -23,5 +25,6 @@ fn _native(_py: Python<'_>, module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(roman_to_arabic, module)?)?;
     module.add_function(wrap_pyfunction!(arabic_to_greek, module)?)?;
     module.add_function(wrap_pyfunction!(greek_to_arabic, module)?)?;
+    historical_fractions::register(module)?;
     Ok(())
 }

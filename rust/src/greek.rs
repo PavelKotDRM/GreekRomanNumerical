@@ -5,7 +5,7 @@ use greekromannumerical_core::{
 };
 use pyo3::prelude::*;
 
-fn greek_options(positional: bool, capital: bool) -> GreekOptions {
+pub(crate) fn greek_options(positional: bool, capital: bool) -> GreekOptions {
     GreekOptions {
         notation: if positional {
             GreekNotation::Positional

@@ -62,6 +62,12 @@ pub(crate) fn map_conversion_error(error: ConversionError) -> PyErr {
         ConversionError::OutputLimitExceeded | ConversionError::ResourceLimitExceeded => {
             PyOverflowError::new_err(message)
         }
-        _ => PyValueError::new_err(message),
+        ConversionError::InvalidRomanNumeral
+        | ConversionError::InvalidGreekNumeral
+        | ConversionError::MalformedFractionalNotation
+        | ConversionError::InvalidFractionalToken
+        | ConversionError::UnrepresentableFraction
+        | ConversionError::NonFiniteFloat
+        | ConversionError::DecimalOutOfRange => PyValueError::new_err(message),
     }
 }

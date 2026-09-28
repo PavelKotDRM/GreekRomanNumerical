@@ -219,6 +219,25 @@ The fractional form is `integer_part.(token:token:...)`. Values without fraction
 
 `NaN` and infinities are not supported and raise `ValueError`. Negative values use a leading `-`; negative zero is normalized to zero.
 
+### Historical-style fractions (optional)
+
+The separate `historical_fractions` module provides an opt-in, historically inspired format. The syntax is modern rather than a canonical ancient spelling. Roman fractions use `S` (1/2), the uncia sign (1/12, U+10191), and the semuncia sign (1/24, U+10192). Greek fractions use sums of unit fractions; `positional` and `capital` select the notation and case for the Greek numerals.
+
+```python
+from GreekRomanUtils import historical_fractions
+
+historical_fractions.arabic_to_roman(0.5)  # ".(S)"
+historical_fractions.roman_to_arabic("III.(S)")  # 3.5
+
+greek_fraction = historical_fractions.arabic_to_greek(3.14)
+# "γ.(α/η+α/ξζ+α/ι_γ_υ)"
+historical_fractions.greek_to_arabic(greek_fraction)  # 3.14
+```
+
+Roman fractions must be representable in steps of 1/24; other values raise `ValueError`. Greek expansions are bounded by the core's resource limits. Numerals without a historical fraction suffix are parsed using the regular Roman or Greek notation.
+
+The module also provides `arabic_to_roman_latex`, `arabic_to_greek_latex`, `arabic_to_roman_mathml`, and `arabic_to_greek_mathml`. LaTeX functions return fragments without `$` delimiters, while MathML functions return complete inline `<math>` elements. These functions and conversions require the Rust extension; calling them when the Python backend is selected (including with `GREEKROMAN_FORCE_PYTHON=1`) raises `RuntimeError`.
+
 ## Arithmetic and comparisons
 
 `GreekNumber` and `RomanNumber` support `+`, `-`, `*`, `/`, `//`, `%`, `**`, unary `+` and `-`, and comparisons. In a binary operation, the numeral object must be on the left; the right-hand operand may be another object of either type or an `int`/`float`:
