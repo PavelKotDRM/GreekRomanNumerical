@@ -1,4 +1,5 @@
 import os
+from collections.abc import Iterable
 from functools import lru_cache
 from typing import Protocol
 
@@ -11,9 +12,18 @@ class BackendProtocol(Protocol):
 
     def arabic_to_roman(self, number: float) -> str: ...
 
+    def arabic_to_roman_many(self, numbers: Iterable[int | float]) -> list[str]: ...
+
     def roman_to_arabic(self, numeral: str) -> int | float: ...
 
     def arabic_to_greek(self, number: float, positional: bool, capital: bool) -> str: ...
+
+    def arabic_to_greek_many(
+        self,
+        numbers: Iterable[int | float],
+        positional: bool,
+        capital: bool,
+    ) -> list[str]: ...
 
     def greek_to_arabic(self, numeral: str, positional: bool, capital: bool) -> int | float: ...
 

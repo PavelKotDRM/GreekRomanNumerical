@@ -13,17 +13,19 @@ pub mod greek;
 mod historical_fractions;
 pub mod roman;
 
-use greek::{arabic_to_greek, greek_to_arabic};
+use greek::{arabic_to_greek, arabic_to_greek_parallel, greek_to_arabic};
 use pyo3::prelude::*;
 use pyo3::types::PyModule;
-use roman::{arabic_to_roman, roman_to_arabic};
+use roman::{arabic_to_roman, arabic_to_roman_parallel, roman_to_arabic};
 
 #[pymodule]
 /// Registers native numeral conversion functions in the `_native` Python module.
 fn _native(_py: Python<'_>, module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(arabic_to_roman, module)?)?;
+    module.add_function(wrap_pyfunction!(arabic_to_roman_parallel, module)?)?;
     module.add_function(wrap_pyfunction!(roman_to_arabic, module)?)?;
     module.add_function(wrap_pyfunction!(arabic_to_greek, module)?)?;
+    module.add_function(wrap_pyfunction!(arabic_to_greek_parallel, module)?)?;
     module.add_function(wrap_pyfunction!(greek_to_arabic, module)?)?;
     historical_fractions::register(module)?;
     Ok(())

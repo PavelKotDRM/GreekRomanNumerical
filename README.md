@@ -2,7 +2,7 @@
 
 ## Module converting Arabic numerals to Greek and Roman numbers
 
-**Version:** 1.4.0\
+**Version:** 1.5.0\
 **Supported Python:** 3.11-3.14 stable; 3.15.0rc2 provisionally tested\
 **Repository:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
 **License:** Apache 2.0
@@ -135,7 +135,8 @@ The benchmark checks result equivalence before timing Roman, classic Greek, and 
 - `GreekRomanUtils/GreekRoman.py` exposes `GreekConvert` and `RomanConvert`; the number objects are `GreekNumber` and `RomanNumber`.
 - `GreekRomanUtils/_backend.py` selects and caches the standard conversion backend. `GreekRomanUtils/_python_impl.py` provides its Python fallback, while `GreekRomanUtils/_rust_impl.py` wraps the native extension.
 - `GreekRomanUtils/historical_fractions.py` exposes the optional historical notation and renderers. It requires the Rust extension and does not use the standard backend fallback.
-- The Rust extension delegates conversions to the `greekromannumerical-core` submodule, pinned at `v0.2.0`.
+- `GreekConvert.convert_many()` and `RomanConvert.convert_many()` convert iterables in parallel with the Rust backend and sequentially with the Python fallback.
+- The Rust extension delegates conversions to the `greekromannumerical-core` submodule, pinned at `v0.3.0`.
 
 See the [project architecture diagram](./Diagrams/Architecture.drawio.svg) for the module and backend relationships.
 
@@ -146,6 +147,7 @@ See the [project architecture diagram](./Diagrams/Architecture.drawio.svg) for t
 - `change_capital` — A flag that controls the conversion of characters to upper or lower case.
 - `change_positional` — Change the positional mode for conversion.
 - `convert` — The function of converting an Arabic number to a Greek one, returns `GreekNumber` object. For example, the number `20005003001` is converted to `Κ___Ε__Γ_Α` (non-positional mode) or to `Κ~Ε~Γ~Α` (positional mode).
+- `convert_many` — Convert an iterable of Arabic numbers to Greek numeral strings in input order.
 - `convert_to_arabic` — A function for converting a Greek number to an Arabic one.
 - `unicode_to_name` — The function converts a Unicode character into its name.
 - `name_to_unicode` — The reverse operation for `unicode_to_name`.
@@ -164,6 +166,7 @@ See the [project architecture diagram](./Diagrams/Architecture.drawio.svg) for t
 **For "RomanConvert":**
 
 - `convert` — The method converts an Arabic number to a Roman number, returns `RomanNumber` object.
+- `convert_many` — Convert an iterable of Arabic numbers to Roman numeral strings in input order.
 - `convert_to_arabic` — The reverse method for `convert`.
 
 **For "RomanNumber":**
@@ -179,7 +182,7 @@ See the [project architecture diagram](./Diagrams/Architecture.drawio.svg) for t
 
 ## Модуль преобразование арабских цифр в греческие и римские числа
 
-**Версия:** 1.4.0\
+**Версия:** 1.5.0\
 **Поддерживаемые версии Python:** 3.11-3.14 stable; 3.15.0rc2 проверяется предварительно\
 **Репозиторий:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
 **Лицензия:** Apache 2.0
@@ -306,7 +309,8 @@ uv run --group performance pytest benchmarks/test_backend_performance.py --bench
 - `GreekRomanUtils/GreekRoman.py` предоставляет `GreekConvert` и `RomanConvert`; числовые объекты — `GreekNumber` и `RomanNumber`.
 - `GreekRomanUtils/_backend.py` выбирает и кэширует backend стандартных конвертеров. `GreekRomanUtils/_python_impl.py` обеспечивает Python-fallback, а `GreekRomanUtils/_rust_impl.py` вызывает нативное расширение.
 - `GreekRomanUtils/historical_fractions.py` предоставляет дополнительную историческую запись и рендеринг; для неё требуется Rust-расширение без Python-fallback.
-- Rust-расширение передаёт преобразования в submodule `greekromannumerical-core`, закреплённый на `v0.2.0`.
+- `GreekConvert.convert_many()` и `RomanConvert.convert_many()` преобразуют iterable параллельно в Rust-backend и последовательно в Python-fallback.
+- Rust-расширение передаёт преобразования в submodule `greekromannumerical-core`, закреплённый на `v0.3.0`.
 
 Связи модулей и backend показаны на [схеме архитектуры проекта](./Diagrams/Architecture.drawio.svg).
 
@@ -317,6 +321,7 @@ uv run --group performance pytest benchmarks/test_backend_performance.py --bench
 - `change_capital` — Флаг, управляющий преобразованием символов в верхний или нижний регистр.
 - `change_positional` — Изменить режим позиционного преобразования.
 - `convert` — Функция преобразования арабского числа в греческое, возвращает объект `GreekNumber`. Например, число `20005003001` преобразуется в `Κ___Ε__Γ_Α` (непозиционный режим) или в `Κ~Ε~Γ~Α` (позиционный режим).
+- `convert_many` — Преобразовать iterable арабских чисел в строки греческих чисел с сохранением исходного порядка.
 - `convert_to_arabic` — Функция преобразования греческого числа в арабское.
 - `unicode_to_name` — Функция преобразует символ Unicode в его название.
 - `name_to_unicode` — Обратная операция для `unicode_to_name`.
@@ -335,6 +340,7 @@ uv run --group performance pytest benchmarks/test_backend_performance.py --bench
 **Для «RomanConvert»:**
 
 - `convert` — Метод преобразует арабское число в римское, возвращает объект `RomanNumber`.
+- `convert_many` — Преобразовать iterable арабских чисел в строки римских чисел с сохранением исходного порядка.
 - `convert_to_arabic` — Обратный метод для `convert`.
 
 **Для «RomanNumber»:**

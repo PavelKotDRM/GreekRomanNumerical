@@ -75,6 +75,16 @@ roman.convert_to_arabic("")               # 0
 
 Pass Roman symbols in uppercase. The parser recognizes supported tokens and rejects unknown symbols, but it is not intended to validate every rule of canonical Roman spelling.
 
+### Batch conversion
+
+`convert_many()` accepts any iterable of integers or finite floats and returns numeral strings in input order. The Rust backend converts them in parallel; the Python fallback uses the same API sequentially.
+An invalid value raises an exception instead of silently omitting that result.
+
+```python
+roman.convert_many([4, 2024, 1.25])
+# ["IV", "MMXXIV", "I.(II:V)"]
+```
+
 ## Greek numerals
 
 ### Classic, positional, and uppercase modes
@@ -131,6 +141,13 @@ positional.convert_to_arabic("α~σλδ")  # 1234
 ```
 
 Zero is represented by an empty string, and negative values have a leading `-`. The Greek numeral alphabet has 27 symbols for units, tens, and hundreds. Special symbols include `ϝ` (6), `ϙ` (90), and `ϡ` (900), with uppercase forms `Ϝ`, `Ϙ`, and `Ϡ`.
+
+The same batch API is available for Greek numerals and uses the converter's current notation and letter case:
+
+```python
+classic.convert_many([4, 1234])
+# ["δ", "α_σλδ"]
+```
 
 ### Greek symbol names
 

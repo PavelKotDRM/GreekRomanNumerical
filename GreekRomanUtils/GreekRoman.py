@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 from ._backend import get_backend
 from .DataStorage.Alphabet import GreekAlphabet, RomanNumberAlphabet
 from .DataType.GreekRomanType import GreekNumber, RomanNumber
@@ -42,6 +44,14 @@ class GreekConvert:
         if isinstance(number, float):
             greek_num.set_number(number)
         return greek_num
+
+    def convert_many(self, numbers: Iterable[int | float]) -> list[str]:
+        """Convert multiple Arabic numbers to Greek numeral strings."""
+        return self._backend.arabic_to_greek_many(
+            numbers,
+            positional=self._positional,
+            capital=self._capital,
+        )
 
     def convert_to_arabic(self, numeral: str) -> int | float:
         """Converting a Greek or Roman number to an Arabic one
@@ -155,6 +165,10 @@ class RomanConvert:
         numeral = self._backend.arabic_to_roman(number=number)
         roman_number._value = self._chunk_roman_value(numeral)
         return roman_number
+
+    def convert_many(self, numbers: Iterable[int | float]) -> list[str]:
+        """Convert multiple Arabic numbers to Roman numeral strings."""
+        return self._backend.arabic_to_roman_many(numbers)
     
     def convert_to_arabic(self, roman_numeral: str) -> int | float:
         """Convert Roman numeral to Arabic number

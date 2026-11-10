@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 from ._numeric import format_float_numeral, parse_decimal_numeral
 from .DataStorage.Alphabet import RomanNumberAlphabet
 from .DataType.GreekRomanType import GreekNumber, RomanNumber
@@ -13,6 +15,9 @@ def arabic_to_roman(number: float) -> str:
             zero_token="_",
         )
     return RomanNumber(number).get_value()
+
+def arabic_to_roman_many(numbers: Iterable[int | float]) -> list[str]:
+    return [arabic_to_roman(number) for number in numbers]
 
 
 def _roman_to_arabic_integer(numeral: str) -> int:
@@ -45,6 +50,16 @@ def arabic_to_greek(number: float, positional: bool, capital: bool) -> str:
             zero_token="~" if positional else "_",
         )
     return str(GreekNumber(number=number, positional=positional, capital=capital))
+
+def arabic_to_greek_many(
+    numbers: Iterable[int | float],
+    positional: bool,
+    capital: bool,
+) -> list[str]:
+    return [
+        arabic_to_greek(number, positional=positional, capital=capital)
+        for number in numbers
+    ]
 
 
 def _greek_to_arabic_integer(numeral: str, positional: bool, capital: bool) -> int:

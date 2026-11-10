@@ -2,7 +2,7 @@ use greekromannumerical_core::{ArabicNumber, ConversionError};
 use num_bigint::BigInt;
 use pyo3::exceptions::{PyOverflowError, PyTypeError, PyValueError};
 use pyo3::prelude::*;
-use pyo3::types::{PyBytes, PyDict, PyFloat, PyInt, PyModule};
+use pyo3::types::{PyBytes, PyDict, PyFloat, PyInt, PyIterator, PyModule};
 
 pub(crate) fn extract_arabic_number(number: &Bound<'_, PyAny>) -> PyResult<ArabicNumber> {
     if number.is_instance_of::<PyFloat>() {
@@ -32,6 +32,12 @@ pub(crate) fn extract_arabic_number(number: &Bound<'_, PyAny>) -> PyResult<Arabi
     let bytes = integer.call_method("to_bytes", (byte_length, "big"), Some(&kwargs))?;
     let bytes = bytes.extract::<Vec<u8>>()?;
     Ok(ArabicNumber::Integer(BigInt::from_signed_bytes_be(&bytes)))
+}
+
+pub(crate) fn extract_arabic_numbers(numbers: &Bound<'_, PyAny>) -> PyResult<Vec<ArabicNumber>> {
+    PyIterator::from_object(numbers)?
+        .map(|number| extract_arabic_number(&number?))
+        .collect()
 }
 
 pub(crate) fn arabic_number_to_python<'py>(

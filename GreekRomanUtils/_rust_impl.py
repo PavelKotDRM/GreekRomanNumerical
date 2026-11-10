@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 from . import _native
 
 name = "rust"
@@ -6,6 +8,9 @@ name = "rust"
 def arabic_to_roman(number: float) -> str:
     return _native.arabic_to_roman(number)
 
+def arabic_to_roman_many(numbers: Iterable[int | float]) -> list[str]:
+    return _native.arabic_to_roman_parallel(numbers)
+
 
 def roman_to_arabic(numeral: str) -> int | float:
     return _native.roman_to_arabic(numeral)
@@ -13,6 +18,13 @@ def roman_to_arabic(numeral: str) -> int | float:
 
 def arabic_to_greek(number: float, positional: bool, capital: bool) -> str:
     return _native.arabic_to_greek(number, positional, capital)
+
+def arabic_to_greek_many(
+    numbers: Iterable[int | float],
+    positional: bool,
+    capital: bool,
+) -> list[str]:
+    return _native.arabic_to_greek_parallel(numbers, positional, capital)
 
 
 def greek_to_arabic(numeral: str, positional: bool, capital: bool) -> int | float:
