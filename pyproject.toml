@@ -25,6 +25,7 @@ classifiers = [
 [project.urls]
 Homepage = "https://github.com/PavelKotDRM/GreekRomanNumerical"
 Documentation = "https://github.com/PavelKotDRM/GreekRomanNumerical"
+PyPI = "https://pypi.org/project/GreekRomanUtils/"
 
 [dependency-groups]
 dev = [

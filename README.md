@@ -5,6 +5,7 @@
 **Version:** 1.5.0\
 **Supported Python:** 3.11-3.14 stable; 3.15.0rc2 provisionally tested\
 **Repository:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
+**PyPI:** [GreekRomanUtils](https://pypi.org/project/GreekRomanUtils/)\
 **License:** Apache 2.0
 
 ### Description
