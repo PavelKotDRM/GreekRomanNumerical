@@ -2,7 +2,7 @@
 
 ## Module converting Arabic numerals to Greek and Roman numbers
 
-**Version:** 1.5.0\
+**Version:** 1.6.0\
 **Supported Python:** 3.11-3.14 stable; 3.15.0rc2 provisionally tested\
 **Repository:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
 **PyPI:** [GreekRomanUtils](https://pypi.org/project/GreekRomanUtils/)\
@@ -67,7 +67,23 @@ git clone --recurse-submodules git@github.com:PavelKotDRM/GreekRomanNumerical.gi
 git submodule update --init --recursive
 ```
 
+The submodule is pinned to a core release tag recorded as `tag` in [`.gitmodules`](./.gitmodules), not to a branch. Use the helper script to verify or switch the core version:
+
+```bash
+python scripts/core_submodule.py check            # checkout matches the pinned tag; warns if a newer tag exists
+python scripts/core_submodule.py sync --tag v0.3.1  # check out a specific tag and pin it
+python scripts/core_submodule.py sync --latest      # check out and pin the newest vX.Y.Z tag
+```
+
+After `sync`, commit both `.gitmodules` and the `greekromannumerical-core` gitlink.
+
 The core repository is accessed over SSH. GitHub Actions also needs a `CORE_SUBMODULE_TOKEN` repository secret: a read-only token with `Contents: read` access to both this repository and the core repository.
+
+### Continuous integration and releases
+
+- `CI` ([`python-publish.yml`](./.github/workflows/python-publish.yml)) runs manually, weekly, and before every release. It verifies the submodule matches its pinned tag, runs lint, type checks, and tests on both backends, and builds and tests against the newest core tag to catch upstream breakage early.
+- `Build and Publish Wheels` ([`wheels.yml`](./.github/workflows/wheels.yml)) runs on `v*` tags. The tag must match the `pyproject.toml` version. After CI passes, it builds wheels and the sdist and publishes them with [PyPI Trusted Publishing](https://docs.pypi.org/trusted-publishers/) (OIDC, no API tokens). Pre-release tags (`a`, `b`, `rc`, `alpha`, `beta`) go to TestPyPI.
+- One-time setup: on PyPI (and TestPyPI) add a trusted publisher for owner `PavelKotDRM`, repository `GreekRomanNumerical`, workflow `wheels.yml`, environment `pypi` (TestPyPI: `testpypi`), and create matching GitHub environments. The `PYPI_API_TOKEN` and `TEST_PYPI_API_TOKEN` secrets are no longer used and can be deleted.
 
 Create the environment and install the project with its Rust extension:
 
@@ -136,10 +152,49 @@ The benchmark checks result equivalence before timing Roman, classic Greek, and 
 - `GreekRomanUtils/GreekRoman.py` exposes `GreekConvert` and `RomanConvert`; the number objects are `GreekNumber` and `RomanNumber`.
 - `GreekRomanUtils/_backend.py` selects and caches the standard conversion backend. `GreekRomanUtils/_python_impl.py` provides its Python fallback, while `GreekRomanUtils/_rust_impl.py` wraps the native extension.
 - `GreekRomanUtils/historical_fractions.py` exposes the optional historical notation and renderers. It requires the Rust extension and does not use the standard backend fallback.
-- `GreekConvert.convert_many()` and `RomanConvert.convert_many()` convert iterables in parallel with the Rust backend and sequentially with the Python fallback.
-- The Rust extension delegates conversions to the `greekromannumerical-core` submodule, pinned at `v0.3.0`.
+- `GreekConvert.convert_many()` and `RomanConvert.convert_many()` convert iterables in parallel with the Rust backend and sequentially with the Python fallback. Pass `progress=True` to show a terminal progress bar.
+- `GreekRomanUtils/progress.py` exposes `create_progress_bar()`, backed by the core `ProgressBar` with the Rust backend and by an equivalent Python implementation otherwise.
+- The Rust extension delegates conversions to the `greekromannumerical-core` submodule, pinned at tag `v0.3.1`.
 
-See the [project architecture diagram](./Diagrams/Architecture.drawio.svg) for the module and backend relationships.
+### Architecture
+
+Module and backend relationships:
+
+```text
+User code
+    |
+    v
+GreekRomanUtils  (public API)
++-- GreekRoman.py ............ GreekConvert / RomanConvert --> GreekNumber / RomanNumber (DataType/)
++-- progress.py .............. create_progress_bar()
++-- historical_fractions.py .. historical notation, LaTeX / MathML  (Rust backend only)
+    |
+    v
+_backend.py   get_backend() -- GREEKROMAN_FORCE_PYTHON=1 or no extension --+
+    | native extension available                                           |
+    v                                                                      v
+_rust_impl.py                                                   _python_impl.py
+    |                                                           +-- _progress.py   (ProgressBar)
+    v                                                           +-- _numeric.py    (fractions)
+_native  (PyO3 extension, rust/src/)                            +-- DataType/, DataStorage/
++-- roman.rs, greek.rs ....... single and parallel batch conversions
++-- progress.rs .............. ProgressBar, batch progress reporting
++-- historical_fractions.rs .. historical notation and renderers
+    |
+    v
+greekromannumerical-core  (Git submodule, pinned tag v0.3.1)
+    roman, greek, parallel, progress, historical_fractions
+```
+
+Build and release pipeline:
+
+```text
+pyproject.toml + maturin --> rust/Cargo.toml --> abi3 wheels (CPython 3.11+) + sdist
+CI       (python-publish.yml): core tag check --> lint, types, tests (Python + Rust) --> newest-core check
+Release  (wheels.yml):         v* tag == pyproject version --> CI --> build --> PyPI Trusted Publishing --> GitHub Release
+```
+
+An editable draw.io version is in [`Diagrams/Architecture.drawio.svg`](https://github.com/PavelKotDRM/GreekRomanNumerical/blob/main/Diagrams/Architecture.drawio.svg).
 
 ### Main functions
 
@@ -148,7 +203,7 @@ See the [project architecture diagram](./Diagrams/Architecture.drawio.svg) for t
 - `change_capital` — A flag that controls the conversion of characters to upper or lower case.
 - `change_positional` — Change the positional mode for conversion.
 - `convert` — The function of converting an Arabic number to a Greek one, returns `GreekNumber` object. For example, the number `20005003001` is converted to `Κ___Ε__Γ_Α` (non-positional mode) or to `Κ~Ε~Γ~Α` (positional mode).
-- `convert_many` — Convert an iterable of Arabic numbers to Greek numeral strings in input order.
+- `convert_many` — Convert an iterable of Arabic numbers to Greek numeral strings in input order; `progress=True` shows a progress bar.
 - `convert_to_arabic` — A function for converting a Greek number to an Arabic one.
 - `unicode_to_name` — The function converts a Unicode character into its name.
 - `name_to_unicode` — The reverse operation for `unicode_to_name`.
@@ -167,7 +222,7 @@ See the [project architecture diagram](./Diagrams/Architecture.drawio.svg) for t
 **For "RomanConvert":**
 
 - `convert` — The method converts an Arabic number to a Roman number, returns `RomanNumber` object.
-- `convert_many` — Convert an iterable of Arabic numbers to Roman numeral strings in input order.
+- `convert_many` — Convert an iterable of Arabic numbers to Roman numeral strings in input order; `progress=True` shows a progress bar.
 - `convert_to_arabic` — The reverse method for `convert`.
 
 **For "RomanNumber":**
@@ -183,7 +238,7 @@ See the [project architecture diagram](./Diagrams/Architecture.drawio.svg) for t
 
 ## Модуль преобразование арабских цифр в греческие и римские числа
 
-**Версия:** 1.5.0\
+**Версия:** 1.6.0\
 **Поддерживаемые версии Python:** 3.11-3.14 stable; 3.15.0rc2 проверяется предварительно\
 **Репозиторий:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
 **Лицензия:** Apache 2.0
@@ -247,7 +302,23 @@ git clone --recurse-submodules git@github.com:PavelKotDRM/GreekRomanNumerical.gi
 git submodule update --init --recursive
 ```
 
+Submodule закреплён на тег релиза core, записанный как `tag` в [`.gitmodules`](./.gitmodules), а не на ветку. Для проверки или смены версии core используйте вспомогательный скрипт:
+
+```bash
+python scripts/core_submodule.py check              # checkout совпадает с закреплённым тегом; предупреждает о более новом теге
+python scripts/core_submodule.py sync --tag v0.3.1  # переключиться на указанный тег и закрепить его
+python scripts/core_submodule.py sync --latest      # переключиться на самый новый тег vX.Y.Z и закрепить его
+```
+
+После `sync` закоммитьте и `.gitmodules`, и gitlink `greekromannumerical-core`.
+
 Core-репозиторий доступен по SSH. Для GitHub Actions также задайте секрет репозитория `CORE_SUBMODULE_TOKEN`: токен только для чтения с правом `Contents: read` для обоих репозиториев.
+
+### Непрерывная интеграция и релизы
+
+- `CI` ([`python-publish.yml`](./.github/workflows/python-publish.yml)) запускается вручную, еженедельно и перед каждым релизом. Он проверяет, что submodule совпадает с закреплённым тегом, запускает линтер, проверку типов и тесты на обоих backend, а также собирает и тестирует проект с самым новым тегом core, чтобы заранее обнаружить несовместимые изменения.
+- `Build and Publish Wheels` ([`wheels.yml`](./.github/workflows/wheels.yml)) запускается на тегах `v*`. Тег должен совпадать с версией в `pyproject.toml`. После успешного CI он собирает wheels и sdist и публикует их через [PyPI Trusted Publishing](https://docs.pypi.org/trusted-publishers/) (OIDC, без API-токенов). Тестовые теги (`a`, `b`, `rc`, `alpha`, `beta`) публикуются в TestPyPI.
+- Однократная настройка: на PyPI (и TestPyPI) добавьте trusted publisher с owner `PavelKotDRM`, repository `GreekRomanNumerical`, workflow `wheels.yml`, environment `pypi` (для TestPyPI — `testpypi`) и создайте соответствующие environments в GitHub. Секреты `PYPI_API_TOKEN` и `TEST_PYPI_API_TOKEN` больше не используются и могут быть удалены.
 
 Создание окружения и установка проекта вместе с Rust-расширением:
 
@@ -310,10 +381,49 @@ uv run --group performance pytest benchmarks/test_backend_performance.py --bench
 - `GreekRomanUtils/GreekRoman.py` предоставляет `GreekConvert` и `RomanConvert`; числовые объекты — `GreekNumber` и `RomanNumber`.
 - `GreekRomanUtils/_backend.py` выбирает и кэширует backend стандартных конвертеров. `GreekRomanUtils/_python_impl.py` обеспечивает Python-fallback, а `GreekRomanUtils/_rust_impl.py` вызывает нативное расширение.
 - `GreekRomanUtils/historical_fractions.py` предоставляет дополнительную историческую запись и рендеринг; для неё требуется Rust-расширение без Python-fallback.
-- `GreekConvert.convert_many()` и `RomanConvert.convert_many()` преобразуют iterable параллельно в Rust-backend и последовательно в Python-fallback.
-- Rust-расширение передаёт преобразования в submodule `greekromannumerical-core`, закреплённый на `v0.3.0`.
+- `GreekConvert.convert_many()` и `RomanConvert.convert_many()` преобразуют iterable параллельно в Rust-backend и последовательно в Python-fallback. Передайте `progress=True`, чтобы показать индикатор прогресса в терминале.
+- `GreekRomanUtils/progress.py` предоставляет `create_progress_bar()`: с Rust-backend используется `ProgressBar` из core, иначе — эквивалентная реализация на Python.
+- Rust-расширение передаёт преобразования в submodule `greekromannumerical-core`, закреплённый на теге `v0.3.1`.
 
-Связи модулей и backend показаны на [схеме архитектуры проекта](./Diagrams/Architecture.drawio.svg).
+### Архитектура
+
+Связи модулей и backend:
+
+```text
+User code
+    |
+    v
+GreekRomanUtils  (public API)
++-- GreekRoman.py ............ GreekConvert / RomanConvert --> GreekNumber / RomanNumber (DataType/)
++-- progress.py .............. create_progress_bar()
++-- historical_fractions.py .. historical notation, LaTeX / MathML  (Rust backend only)
+    |
+    v
+_backend.py   get_backend() -- GREEKROMAN_FORCE_PYTHON=1 or no extension --+
+    | native extension available                                           |
+    v                                                                      v
+_rust_impl.py                                                   _python_impl.py
+    |                                                           +-- _progress.py   (ProgressBar)
+    v                                                           +-- _numeric.py    (fractions)
+_native  (PyO3 extension, rust/src/)                            +-- DataType/, DataStorage/
++-- roman.rs, greek.rs ....... single and parallel batch conversions
++-- progress.rs .............. ProgressBar, batch progress reporting
++-- historical_fractions.rs .. historical notation and renderers
+    |
+    v
+greekromannumerical-core  (Git submodule, pinned tag v0.3.1)
+    roman, greek, parallel, progress, historical_fractions
+```
+
+Сборка и выпуск релиза:
+
+```text
+pyproject.toml + maturin --> rust/Cargo.toml --> abi3 wheels (CPython 3.11+) + sdist
+CI       (python-publish.yml): core tag check --> lint, types, tests (Python + Rust) --> newest-core check
+Release  (wheels.yml):         v* tag == pyproject version --> CI --> build --> PyPI Trusted Publishing --> GitHub Release
+```
+
+Редактируемая версия схемы в формате draw.io: [`Diagrams/Architecture.drawio.svg`](https://github.com/PavelKotDRM/GreekRomanNumerical/blob/main/Diagrams/Architecture.drawio.svg).
 
 ## Основные функции
 
@@ -322,7 +432,7 @@ uv run --group performance pytest benchmarks/test_backend_performance.py --bench
 - `change_capital` — Флаг, управляющий преобразованием символов в верхний или нижний регистр.
 - `change_positional` — Изменить режим позиционного преобразования.
 - `convert` — Функция преобразования арабского числа в греческое, возвращает объект `GreekNumber`. Например, число `20005003001` преобразуется в `Κ___Ε__Γ_Α` (непозиционный режим) или в `Κ~Ε~Γ~Α` (позиционный режим).
-- `convert_many` — Преобразовать iterable арабских чисел в строки греческих чисел с сохранением исходного порядка.
+- `convert_many` — Преобразовать iterable арабских чисел в строки греческих чисел с сохранением исходного порядка; `progress=True` показывает индикатор прогресса.
 - `convert_to_arabic` — Функция преобразования греческого числа в арабское.
 - `unicode_to_name` — Функция преобразует символ Unicode в его название.
 - `name_to_unicode` — Обратная операция для `unicode_to_name`.
@@ -341,7 +451,7 @@ uv run --group performance pytest benchmarks/test_backend_performance.py --bench
 **Для «RomanConvert»:**
 
 - `convert` — Метод преобразует арабское число в римское, возвращает объект `RomanNumber`.
-- `convert_many` — Преобразовать iterable арабских чисел в строки римских чисел с сохранением исходного порядка.
+- `convert_many` — Преобразовать iterable арабских чисел в строки римских чисел с сохранением исходного порядка; `progress=True` показывает индикатор прогресса.
 - `convert_to_arabic` — Обратный метод для `convert`.
 
 **Для «RomanNumber»:**
@@ -350,10 +460,6 @@ uv run --group performance pytest benchmarks/test_backend_performance.py --bench
 - `get_number` — Получить текущее число.
 - `get_value` — Получить строковое представление римского числа.
 - И базовые математические операции (+, -, *, /, //, %, **, ==, !=, <, <=, >, >=).
-
-**Архитектура проекта**
-
-![Архитектура проекта](./Diagrams/Architecture.drawio.svg)
 
 ## License
 

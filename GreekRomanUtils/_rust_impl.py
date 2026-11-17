@@ -5,11 +5,19 @@ from . import _native
 name = "rust"
 
 
+def create_progress_bar(total: int, message: str | None = None) -> _native.ProgressBar:
+    return _native.ProgressBar(total, message)
+
+
 def arabic_to_roman(number: float) -> str:
     return _native.arabic_to_roman(number)
 
-def arabic_to_roman_many(numbers: Iterable[int | float]) -> list[str]:
-    return _native.arabic_to_roman_parallel(numbers)
+def arabic_to_roman_many(
+    numbers: Iterable[int | float],
+    progress: bool = False,
+    message: str | None = None,
+) -> list[str]:
+    return _native.arabic_to_roman_parallel(numbers, progress, message)
 
 
 def roman_to_arabic(numeral: str) -> int | float:
@@ -23,8 +31,10 @@ def arabic_to_greek_many(
     numbers: Iterable[int | float],
     positional: bool,
     capital: bool,
+    progress: bool = False,
+    message: str | None = None,
 ) -> list[str]:
-    return _native.arabic_to_greek_parallel(numbers, positional, capital)
+    return _native.arabic_to_greek_parallel(numbers, positional, capital, progress, message)
 
 
 def greek_to_arabic(numeral: str, positional: bool, capital: bool) -> int | float:

@@ -1,10 +1,36 @@
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 
 from ._numeric import format_float_numeral, parse_decimal_numeral
+from ._progress import ProgressBar
 from .DataStorage.Alphabet import RomanNumberAlphabet
 from .DataType.GreekRomanType import GreekNumber, RomanNumber
 
 name = "python"
+
+
+def create_progress_bar(total: int, message: str | None = None) -> ProgressBar:
+    return ProgressBar(total, message)
+
+
+def _convert_many(
+    numbers: Iterable[int | float],
+    convert: Callable[[int | float], str],
+    progress: bool,
+    message: str | None,
+) -> list[str]:
+    if not progress:
+        return [convert(number) for number in numbers]
+
+    numbers = list(numbers)
+    bar = ProgressBar(len(numbers), message)
+    try:
+        results = []
+        for number in numbers:
+            results.append(convert(number))
+            bar.inc()
+        return results
+    finally:
+        bar.finish()
 
 
 def arabic_to_roman(number: float) -> str:
@@ -16,8 +42,12 @@ def arabic_to_roman(number: float) -> str:
         )
     return RomanNumber(number).get_value()
 
-def arabic_to_roman_many(numbers: Iterable[int | float]) -> list[str]:
-    return [arabic_to_roman(number) for number in numbers]
+def arabic_to_roman_many(
+    numbers: Iterable[int | float],
+    progress: bool = False,
+    message: str | None = None,
+) -> list[str]:
+    return _convert_many(numbers, arabic_to_roman, progress, message)
 
 
 def _roman_to_arabic_integer(numeral: str) -> int:
@@ -55,11 +85,15 @@ def arabic_to_greek_many(
     numbers: Iterable[int | float],
     positional: bool,
     capital: bool,
+    progress: bool = False,
+    message: str | None = None,
 ) -> list[str]:
-    return [
-        arabic_to_greek(number, positional=positional, capital=capital)
-        for number in numbers
-    ]
+    return _convert_many(
+        numbers,
+        lambda number: arabic_to_greek(number, positional=positional, capital=capital),
+        progress,
+        message,
+    )
 
 
 def _greek_to_arabic_integer(numeral: str, positional: bool, capital: bool) -> int:

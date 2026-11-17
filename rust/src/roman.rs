@@ -1,12 +1,11 @@
-use crate::common::{
-    arabic_number_to_python, extract_arabic_number, extract_arabic_numbers, map_conversion_error,
-};
+use crate::common::{arabic_number_to_python, extract_arabic_number, map_conversion_error};
+use crate::progress::convert_batch;
 use greekromannumerical_core::{
     arabic_to_roman as core_arabic_to_roman,
     arabic_to_roman_parallel as core_arabic_to_roman_parallel,
     roman_to_arabic as core_roman_to_arabic,
 };
-use pyo3::{exceptions::PyRuntimeError, prelude::*};
+use pyo3::prelude::*;
 
 /// Converts an Arabic integer or finite float to an extended Roman numeral.
 ///
@@ -23,19 +22,25 @@ pub fn arabic_to_roman(number: &Bound<'_, PyAny>) -> PyResult<String> {
 }
 
 /// Converts an iterable of Arabic integers or finite floats to Roman numerals in parallel.
+///
+/// Set `progress` to render a progress bar on standard error (only when it is a terminal),
+/// optionally prefixed with `message`.
 #[pyfunction]
+#[pyo3(signature = (numbers, progress=false, message=None))]
 pub fn arabic_to_roman_parallel(
     py: Python<'_>,
     numbers: &Bound<'_, PyAny>,
+    progress: bool,
+    message: Option<&str>,
 ) -> PyResult<Vec<String>> {
-    let numbers = extract_arabic_numbers(numbers)?;
-    let results = py
-        .detach(|| core_arabic_to_roman_parallel(&numbers))
-        .map_err(|error| PyRuntimeError::new_err(error.to_string()))?;
-    results
-        .into_iter()
-        .map(|result| result.map_err(map_conversion_error))
-        .collect()
+    convert_batch(
+        py,
+        numbers,
+        progress,
+        message,
+        core_arabic_to_roman_parallel,
+        core_arabic_to_roman,
+    )
 }
 
 /// Converts an extended Roman numeral back to an Arabic integer or float.

@@ -85,6 +85,26 @@ roman.convert_many([4, 2024, 1.25])
 # ["IV", "MMXXIV", "I.(II:V)"]
 ```
 
+### Индикатор прогресса
+
+Передайте `progress=True` в `convert_many()`, чтобы вывести индикатор прогресса в stderr, при необходимости с префиксом `message`. Индикатор отображается только если stderr — терминал, поэтому логи и перенаправленный вывод остаются чистыми. В Rust-backend это индикатор из `greekromannumerical-core`, который обновляется параллельными потоками.
+
+```python
+roman.convert_many(range(1, 1_000_001), progress=True, message="Roman")
+# Roman [==============================] 100% (1000000/1000000)
+```
+
+`create_progress_bar()` предоставляет тот же индикатор для собственных циклов. Он автоматически завершается при нормальном выходе из блока `with`; обновления после `finish()` вызывают `RuntimeError`.
+
+```python
+from GreekRomanUtils import create_progress_bar
+
+with create_progress_bar(total=3, message="Working") as bar:
+    for step in range(3):
+        ...
+        bar.inc()  # также: set_position(n), set_message(text), position, total
+```
+
 ## Греческие числа
 
 ### Классический, позиционный и прописной режимы

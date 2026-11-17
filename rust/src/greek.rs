@@ -1,12 +1,11 @@
-use crate::common::{
-    arabic_number_to_python, extract_arabic_number, extract_arabic_numbers, map_conversion_error,
-};
+use crate::common::{arabic_number_to_python, extract_arabic_number, map_conversion_error};
+use crate::progress::convert_batch;
 use greekromannumerical_core::{
     GreekCase, GreekNotation, GreekOptions, arabic_to_greek as core_arabic_to_greek,
     arabic_to_greek_parallel as core_arabic_to_greek_parallel,
     greek_to_arabic as core_greek_to_arabic,
 };
-use pyo3::{exceptions::PyRuntimeError, prelude::*};
+use pyo3::prelude::*;
 
 pub(crate) fn greek_options(positional: bool, capital: bool) -> GreekOptions {
     GreekOptions {
@@ -45,21 +44,28 @@ pub fn arabic_to_greek(
 }
 
 /// Converts an iterable of Arabic integers or finite floats to Greek numerals in parallel.
+///
+/// Set `progress` to render a progress bar on standard error (only when it is a terminal),
+/// optionally prefixed with `message`.
 #[pyfunction]
+#[pyo3(signature = (numbers, positional, capital, progress=false, message=None))]
 pub fn arabic_to_greek_parallel(
     py: Python<'_>,
     numbers: &Bound<'_, PyAny>,
     positional: bool,
     capital: bool,
+    progress: bool,
+    message: Option<&str>,
 ) -> PyResult<Vec<String>> {
-    let numbers = extract_arabic_numbers(numbers)?;
-    let results = py
-        .detach(|| core_arabic_to_greek_parallel(&numbers, greek_options(positional, capital)))
-        .map_err(|error| PyRuntimeError::new_err(error.to_string()))?;
-    results
-        .into_iter()
-        .map(|result| result.map_err(map_conversion_error))
-        .collect()
+    let options = greek_options(positional, capital);
+    convert_batch(
+        py,
+        numbers,
+        progress,
+        message,
+        |numbers| core_arabic_to_greek_parallel(numbers, options),
+        |number| core_arabic_to_greek(number, options),
+    )
 }
 
 /// Converts a Greek numeral in classic or positional form to an Arabic integer or float.

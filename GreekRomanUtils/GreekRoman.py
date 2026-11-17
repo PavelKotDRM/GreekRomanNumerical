@@ -45,12 +45,26 @@ class GreekConvert:
             greek_num.set_number(number)
         return greek_num
 
-    def convert_many(self, numbers: Iterable[int | float]) -> list[str]:
-        """Convert multiple Arabic numbers to Greek numeral strings."""
+    def convert_many(
+        self,
+        numbers: Iterable[int | float],
+        *,
+        progress: bool = False,
+        message: str | None = None,
+    ) -> list[str]:
+        """Convert multiple Arabic numbers to Greek numeral strings.
+
+        Args:
+            numbers (Iterable[int | float]): Numbers to convert
+            progress (bool): Render a progress bar on stderr when it is a terminal
+            message (str | None): Optional text displayed before the progress bar
+        """
         return self._backend.arabic_to_greek_many(
             numbers,
             positional=self._positional,
             capital=self._capital,
+            progress=progress,
+            message=message,
         )
 
     def convert_to_arabic(self, numeral: str) -> int | float:
@@ -166,9 +180,21 @@ class RomanConvert:
         roman_number._value = self._chunk_roman_value(numeral)
         return roman_number
 
-    def convert_many(self, numbers: Iterable[int | float]) -> list[str]:
-        """Convert multiple Arabic numbers to Roman numeral strings."""
-        return self._backend.arabic_to_roman_many(numbers)
+    def convert_many(
+        self,
+        numbers: Iterable[int | float],
+        *,
+        progress: bool = False,
+        message: str | None = None,
+    ) -> list[str]:
+        """Convert multiple Arabic numbers to Roman numeral strings.
+
+        Args:
+            numbers (Iterable[int | float]): Numbers to convert
+            progress (bool): Render a progress bar on stderr when it is a terminal
+            message (str | None): Optional text displayed before the progress bar
+        """
+        return self._backend.arabic_to_roman_many(numbers, progress=progress, message=message)
     
     def convert_to_arabic(self, roman_numeral: str) -> int | float:
         """Convert Roman numeral to Arabic number

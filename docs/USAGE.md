@@ -85,6 +85,26 @@ roman.convert_many([4, 2024, 1.25])
 # ["IV", "MMXXIV", "I.(II:V)"]
 ```
 
+### Progress bar
+
+Pass `progress=True` to `convert_many()` to render a progress bar on stderr, optionally prefixed with `message`. The bar is drawn only when stderr is a terminal, so logs and redirected output stay clean. With the Rust backend it is the `greekromannumerical-core` progress bar, updated from the parallel workers.
+
+```python
+roman.convert_many(range(1, 1_000_001), progress=True, message="Roman")
+# Roman [==============================] 100% (1000000/1000000)
+```
+
+`create_progress_bar()` exposes the same bar for your own loops. It is finished automatically when a `with` block exits normally; further updates after `finish()` raise `RuntimeError`.
+
+```python
+from GreekRomanUtils import create_progress_bar
+
+with create_progress_bar(total=3, message="Working") as bar:
+    for step in range(3):
+        ...
+        bar.inc()  # also: set_position(n), set_message(text), position, total
+```
+
 ## Greek numerals
 
 ### Classic, positional, and uppercase modes

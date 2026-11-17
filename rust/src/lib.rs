@@ -5,12 +5,14 @@
 //! classic Greek zero digits use `_`; positional Greek zero digits use `~`. For example,
 //! `1.05` is written as `I.(_:V)`, `α.(_:ε)`, or `α.(~:ε)`.
 //! The optional historical-fraction API also exposes LaTeX and MathML renderers.
+//! Batch conversions can report progress through the core terminal [`progress::ProgressBar`].
 //!
 //! Conversion implementations are organized by responsibility in [`greek`] and [`roman`].
 
 mod common;
 pub mod greek;
 mod historical_fractions;
+mod progress;
 pub mod roman;
 
 use greek::{arabic_to_greek, arabic_to_greek_parallel, greek_to_arabic};
@@ -28,5 +30,6 @@ fn _native(_py: Python<'_>, module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(arabic_to_greek_parallel, module)?)?;
     module.add_function(wrap_pyfunction!(greek_to_arabic, module)?)?;
     historical_fractions::register(module)?;
+    progress::register(module)?;
     Ok(())
 }

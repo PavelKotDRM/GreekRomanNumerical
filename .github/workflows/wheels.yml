@@ -1,5 +1,10 @@
 name: Build and Publish Wheels
 
+# Publishing uses PyPI Trusted Publishing (OIDC); no API tokens are stored in the repository.
+# Configure a trusted publisher on PyPI (and TestPyPI for pre-releases) with:
+#   owner: PavelKotDRM, repository: GreekRomanNumerical,
+#   workflow: wheels.yml, environment: pypi (TestPyPI: testpypi)
+
 on:
   push:
     tags:
@@ -12,12 +17,49 @@ on:
         type: string
 
 permissions:
-  contents: write
-  id-token: write
+  contents: read
 
 jobs:
+  release-info:
+    name: Resolve release
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.info.outputs.tag }}
+      prerelease: ${{ steps.info.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.release_ref || github.ref }}
+
+      - name: Check tag matches the package version
+        id: info
+        env:
+          TAG: ${{ inputs.release_ref || github.ref_name }}
+        run: |
+          version="$(python3 -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')"
+          if [ "$TAG" != "v$version" ]; then
+            echo "::error::Tag $TAG does not match pyproject.toml version $version"
+            exit 1
+          fi
+          case "$TAG" in
+            *rc*|*alpha*|*beta*|*[0-9]a[0-9]*|*[0-9]b[0-9]*) prerelease=true ;;
+            *) prerelease=false ;;
+          esac
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$prerelease" >> "$GITHUB_OUTPUT"
+
+  ci:
+    name: CI
+    needs: release-info
+    uses: ./.github/workflows/python-publish.yml
+    with:
+      ref: ${{ needs.release-info.outputs.tag }}
+      skip-latest-core: true
+    secrets: inherit
+
   build-wheels:
     name: Build wheels on ${{ matrix.os }}
+    needs: [release-info, ci]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -27,7 +69,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_ref || github.ref }}
+          ref: ${{ needs.release-info.outputs.tag }}
           submodules: recursive
           token: ${{ secrets.CORE_SUBMODULE_TOKEN || github.token }}
 
@@ -45,11 +87,12 @@ jobs:
           path: rust/target/wheels/*.whl
 
   build-sdist:
+    needs: [release-info, ci]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_ref || github.ref }}
+          ref: ${{ needs.release-info.outputs.tag }}
           submodules: recursive
           token: ${{ secrets.CORE_SUBMODULE_TOKEN || github.token }}
 
@@ -65,64 +108,78 @@ jobs:
           name: sdist
           path: rust/target/wheels/*.tar.gz
 
-  publish:
-    needs: [build-wheels, build-sdist]
-    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+  publish-testpypi:
+    name: Publish to TestPyPI
+    needs: [release-info, build-wheels, build-sdist]
+    if: needs.release-info.outputs.prerelease == 'true'
     runs-on: ubuntu-latest
-    env:
-      PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-      TEST_PYPI_API_TOKEN: ${{ secrets.TEST_PYPI_API_TOKEN }}
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/project/GreekRomanUtils/
+    permissions:
+      id-token: write
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v8
         with:
-          pattern: '*'
+          merge-multiple: true
+          path: dist
+
+      - name: Publish to TestPyPI (Trusted Publishing)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: true
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: [release-info, build-wheels, build-sdist]
+    if: needs.release-info.outputs.prerelease == 'false'
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/GreekRomanUtils/
+    permissions:
+      id-token: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v8
+        with:
           merge-multiple: true
           path: dist
 
       - name: Show prepared artifacts
-        shell: bash
         run: ls -la dist
 
-      - name: Publish to TestPyPI (API token)
-        if: (contains(github.ref_name, 'rc') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha')) && env.TEST_PYPI_API_TOKEN != ''
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: dist
-          repository-url: https://test.pypi.org/legacy/
-          skip-existing: true
-          user: __token__
-          password: ${{ env.TEST_PYPI_API_TOKEN }}
-
-      - name: Publish to TestPyPI (Trusted Publishing)
-        if: (contains(github.ref_name, 'rc') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha')) && env.TEST_PYPI_API_TOKEN == ''
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: dist
-          repository-url: https://test.pypi.org/legacy/
-          skip-existing: true
-
-      - name: Publish to PyPI (API token)
-        if: (contains(github.ref_name, 'rc') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha')) == false && env.PYPI_API_TOKEN != ''
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: dist
-          skip-existing: true
-          user: __token__
-          password: ${{ env.PYPI_API_TOKEN }}
-
       - name: Publish to PyPI (Trusted Publishing)
-        if: (contains(github.ref_name, 'rc') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha')) == false && env.PYPI_API_TOKEN == ''
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist
           skip-existing: true
+
+  github-release:
+    name: Create GitHub Release
+    needs: [release-info, publish-testpypi, publish-pypi]
+    if: >-
+      always() && !cancelled() &&
+      (needs.publish-pypi.result == 'success' || needs.publish-testpypi.result == 'success')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v8
+        with:
+          merge-multiple: true
+          path: dist
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
+          tag_name: ${{ needs.release-info.outputs.tag }}
           files: |
             dist/*.whl
             dist/*.tar.gz
           draft: false
-          prerelease: ${{ contains(github.ref_name, 'rc') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') }}
+          prerelease: ${{ needs.release-info.outputs.prerelease == 'true' }}

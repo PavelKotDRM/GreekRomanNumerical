@@ -4,6 +4,7 @@ from functools import lru_cache
 from typing import Protocol
 
 from . import _python_impl
+from ._progress import ProgressBarProtocol
 
 
 class BackendProtocol(Protocol):
@@ -12,7 +13,18 @@ class BackendProtocol(Protocol):
 
     def arabic_to_roman(self, number: float) -> str: ...
 
-    def arabic_to_roman_many(self, numbers: Iterable[int | float]) -> list[str]: ...
+    def create_progress_bar(
+        self,
+        total: int,
+        message: str | None = None,
+    ) -> ProgressBarProtocol: ...
+
+    def arabic_to_roman_many(
+        self,
+        numbers: Iterable[int | float],
+        progress: bool = False,
+        message: str | None = None,
+    ) -> list[str]: ...
 
     def roman_to_arabic(self, numeral: str) -> int | float: ...
 
@@ -23,6 +35,8 @@ class BackendProtocol(Protocol):
         numbers: Iterable[int | float],
         positional: bool,
         capital: bool,
+        progress: bool = False,
+        message: str | None = None,
     ) -> list[str]: ...
 
     def greek_to_arabic(self, numeral: str, positional: bool, capital: bool) -> int | float: ...

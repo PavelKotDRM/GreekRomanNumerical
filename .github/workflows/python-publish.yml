@@ -1,22 +1,46 @@
-# This workflow will upload a Python Package to PyPI when a release is created
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python#publishing-to-package-registries
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
+# Continuous integration: verifies the core submodule version tag, runs the test matrix,
+# and checks that the newest greekromannumerical-core tag still builds. Reused by wheels.yml.
 
 name: CI
 
 on:
+  schedule:
+    # Weekly check that the newest greekromannumerical-core tag still builds and passes tests.
+    - cron: "0 6 * * 1"
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref:
+        description: "Git ref to test"
+        required: false
+        type: string
+        default: ""
+      skip-latest-core:
+        description: "Skip building and testing against the newest core tag"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 jobs:
+  core-submodule:
+    name: Core submodule tag
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        ref: ${{ inputs.ref || github.ref }}
+        submodules: recursive
+        token: ${{ secrets.CORE_SUBMODULE_TOKEN || github.token }}
+
+    - name: Verify submodule matches the pinned version tag
+      run: python3 scripts/core_submodule.py check
+
   test:
     name: Python ${{ matrix.python-version }}
+    needs: core-submodule
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -25,6 +49,7 @@ jobs:
     steps:
     - uses: actions/checkout@v7
       with:
+        ref: ${{ inputs.ref || github.ref }}
         submodules: recursive
         token: ${{ secrets.CORE_SUBMODULE_TOKEN || github.token }}
 
@@ -61,4 +86,39 @@ jobs:
     
     - name: Build package
       run: uv build
-      
+
+  core-latest:
+    name: Latest core tag
+    needs: core-submodule
+    if: ${{ !inputs.skip-latest-core }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        ref: ${{ inputs.ref || github.ref }}
+        submodules: recursive
+        token: ${{ secrets.CORE_SUBMODULE_TOKEN || github.token }}
+
+    - name: Check out the newest core version tag
+      id: core
+      run: python3 scripts/core_submodule.py sync --latest
+
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        version: "latest"
+
+    - name: Install dependencies
+      run: uv sync --locked --group dev
+
+    - name: Run core tests
+      run: cargo test --manifest-path greekromannumerical-core/Cargo.toml
+
+    - name: Build Rust extension against core ${{ steps.core.outputs.tag }}
+      run: uv run maturin develop --manifest-path rust/Cargo.toml
+
+    - name: Run tests (Hybrid backend)
+      run: uv run pytest tests/ -v
