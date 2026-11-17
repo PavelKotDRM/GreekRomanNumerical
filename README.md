@@ -3,7 +3,7 @@
 ## Module converting Arabic numerals to Greek and Roman numbers
 
 **Version:** 1.6.0\
-**Supported Python:** 3.11-3.14 stable; 3.15.0rc2 provisionally tested\
+**Supported Python:** 3.11-3.15 stable; 3.16.0a2 included as a provisional CI check\
 **Repository:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
 **PyPI:** [GreekRomanUtils](https://pypi.org/project/GreekRomanUtils/)\
 **License:** Apache 2.0
@@ -239,7 +239,7 @@ An editable draw.io version is in [`Diagrams/Architecture.drawio.svg`](https://g
 ## Модуль преобразование арабских цифр в греческие и римские числа
 
 **Версия:** 1.6.0\
-**Поддерживаемые версии Python:** 3.11-3.14 stable; 3.15.0rc2 проверяется предварительно\
+**Поддерживаемые версии Python:** 3.11-3.15 stable; 3.16.0a2 включена в предварительную проверку CI\
 **Репозиторий:** [GitHub - GreekRomanNumerical](https://github.com/PavelKotDRM/GreekRomanNumerical)  
 **Лицензия:** Apache 2.0
 

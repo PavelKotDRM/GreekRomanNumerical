@@ -45,7 +45,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15.0rc2"]
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15", "3.16.0a2"]
     steps:
     - uses: actions/checkout@v7
       with:
@@ -77,6 +77,10 @@ jobs:
       env:
         GREEKROMAN_FORCE_PYTHON: "1"
       run: uv run pytest tests/ -v
+
+    - name: Enable PyO3 forward compatibility for Python 3.16 alpha
+      if: matrix.python-version == '3.16.0a2'
+      run: echo "PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1" >> "$GITHUB_ENV"
 
     - name: Build Rust extension for hybrid tests
       run: uv run maturin develop --manifest-path rust/Cargo.toml
